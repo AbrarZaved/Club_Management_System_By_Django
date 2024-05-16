@@ -163,7 +163,7 @@
                     <div class="row row mb-1 bg-dark text-white">
                       <div class="col-md-6">
                         <div class="form-group">
-                          <p><strong><h5 class="text-info">{{student}}</h5></strong></p>
+                          <p><strong><h5 class="text-info">First Name</h5></strong></p>
                           <p>{{student.first_name}}</p>
                         </div>
                       </div>
@@ -178,7 +178,7 @@
                       <div class="col-md-6">
                         <div class="form-group">
                           <p><strong><h5 class="text-info">Student Id</h5></strong></p>
-                          <p>{{user}}</p>
+                          <p>{{student.student_id}}</p>
                         </div>
                       </div>
                       <div class="col-md-6 ">
@@ -186,6 +186,14 @@
                           <p><strong><h5 class="text-info">Email</h5></strong></p>
                           <p>{{student.email}}</p>
                         </div>
+                      </div>
+                    </div>
+                    <div class="row row mb-1 bg-dark text-white">
+                      <div class="col-md-12  ">
+                          <div class="form-group">
+                              <p><strong><h5 class="text-info">Username</h5></strong></p>
+                              {{ user}}
+                          </div>
                       </div>
                     </div>
                     <div class="row row mb-1 bg-dark text-white">
