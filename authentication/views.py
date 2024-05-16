@@ -53,6 +53,13 @@ def user_edit(request,pk):
         form = StudentForm(request.POST, instance=students)
         if form.is_valid():
             form.save()
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
+            user = students.user
+            if user:
+                user.first_name = first_name
+                user.last_name = last_name
+                user.save()
             print("Data Updated")
             return redirect('profile')
         else:

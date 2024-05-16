@@ -151,7 +151,7 @@
             <div class="col-md-8">
               <div class="card">
                 <div class="card-header bg-secondary">
-                  <br><h3 class="card-title text-white"><strong>Profile of {{user.first_name}}</strong></h3><br>
+                  <br><h3 class="card-title text-white"><strong>Profile of {{user.get_full_name}}</strong></h3><br>
 
                 </div>
                 <div class="card-body">
@@ -222,9 +222,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
+                          <div class="row row mb-1 bg-dark text-white">
+                            <div class="col-md-12  ">
                                 <div class="form-group">
+                                    <p><strong><h5 class="text-info">Address</h5></strong></p>
+                                    {{ form.about_you }}
                                 </div>
                             </div>
                         </div>
@@ -246,7 +248,7 @@
                   <h6 class="card-category">CEO / Co-Founder</h6>
                   <h4 class="card-title">{{user.get_full_name}}</h4>
                   <p class="card-description">
-                    {{user.about_you}}
+                    
                   </p>
                   <a href="#pablo" class="btn btn-primary btn-round">Follow</a>
                 </div>

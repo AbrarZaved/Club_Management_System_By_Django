@@ -151,7 +151,7 @@
             <div class="col-md-8">
               <div class="card">
                   <div class="card-header bg-secondary">
-                    <br><h3 class="card-title text-white"><strong>Profile of {{student.first_name}}</strong></h3><br>
+                    <br><h3 class="card-title text-white"><strong>Profile of {{student.user.get_full_name}}</strong></h3><br>
                       <div>
                         <a href="{% url 'user_edit' student.id %}" class="btn btn-primary"><i class="bi bi-pencil-square"></i>Edit Profile</a>
                       </div>
@@ -232,27 +232,24 @@
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                {% endfor %}
+                
               </div>
             </div>
             <div class="col-md-4">
               <div class="card card-profile">
                 <div class="card-avatar">
-                  <a href="#pablo">
-                    <img class="img" src="{% static 'css/assets/img/faces/marc.jpg' %}" />
-                  </a>
+                  <img src="{{ student.image.url }}">
                 </div>
                 <div class="card-body">
-                  <h6 class="card-category">CEO / Co-Founder</h6>
-                  <h4 class="card-title">{{user.get_full_name}}</h4>
+                  <h4 class="card-title">{{student.user.get_full_name}}</h4>
                   <p class="card-description">
                     {{student.about_you}}
                   </p>
-                  <a href="#pablo" class="btn btn-primary btn-round">Follow</a>
                 </div>
               </div>
             </div>
           </div>
+          {% endfor %}
         </div>
       </div>
     </div>
