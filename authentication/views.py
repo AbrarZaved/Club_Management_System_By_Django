@@ -60,10 +60,8 @@ def user_edit(request,pk):
                 user.first_name = first_name
                 user.last_name = last_name
                 user.save()
-            print("Data Updated")
             return redirect('profile')
         else:
-            print("Data Not Updated")
             return render(request, 'user_edit.html', {'form': form})
     
     return render(request, 'user_edit.html', {'form': form})

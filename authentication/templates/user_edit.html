@@ -187,10 +187,16 @@
                             </div>
                         </div>
                         <div class="row row mb-1 bg-dark text-white">
-                            <div class="col-md-12  ">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <p><strong><h5 class="text-info">Username</h5></strong></p>
-                                    {{ user}}
+                                    {{user}}
+                                </div>
+                            </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                    <p><strong><h5 class="text-info">Profile Photo</h5></strong></p>
+                                    {{form.profile_pic}}
                                 </div>
                             </div>
                         </div>
@@ -225,7 +231,7 @@
                           <div class="row row mb-1 bg-dark text-white">
                             <div class="col-md-12  ">
                                 <div class="form-group">
-                                    <p><strong><h5 class="text-info">Address</h5></strong></p>
+                                    <p><strong><h5 class="text-info">About You</h5></strong></p>
                                     {{ form.about_you }}
                                 </div>
                             </div>
@@ -240,17 +246,16 @@
             <div class="col-md-4">
               <div class="card card-profile">
                 <div class="card-avatar">
-                  <a href="#pablo">
-                    <img class="img" src="{% static 'css/assets/img/faces/marc.jpg' %}" />
-                  </a>
+                    <img class="img" src="{{form.profile_pic.value.url}}" />
                 </div>
                 <div class="card-body">
                   <h6 class="card-category">CEO / Co-Founder</h6>
                   <h4 class="card-title">{{user.get_full_name}}</h4>
                   <p class="card-description">
+                    {{form.about_you.value}}
                     
                   </p>
-                  <a href="#pablo" class="btn btn-primary btn-round">Follow</a>
+                  <button type="submit" class="btn btn-primary btn-round">Follow</button>
                 </div>
               </div>
             </div>

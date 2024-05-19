@@ -17,7 +17,7 @@ class StudentForm(forms.ModelForm):
             'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
             'batch': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
-            'hobbies': forms.TextInput(attrs={'class': 'form-control'}),
+            'profile_pic': forms.FileInput(attrs={'class': 'form-control'}),
             'about_you': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
