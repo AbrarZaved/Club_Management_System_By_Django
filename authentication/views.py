@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
-from .models import Student
+from .models import Student,UserRegistration
 from .forms import StudentForm
 from django.contrib.auth.models import User
 
@@ -16,23 +16,23 @@ def user_login(request):
             login(request,user)
             return redirect('dashboard')
         else:
-            return render(request, 'login.html') 
+            return render(request, 'sign.html') 
     
     else:
-        return render(request, 'login.html')
+        return render(request, 'sign.html')
 
 
 def user_registration(request):
     if request.method == 'POST':
-        form = StudentForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')
-        else:
-            return render(request, 'login.html', {'form': form})
+        username = request.POST["username"]
+        password = request.POST["password"]
+        email = request.POST["email"]
+        user = User.objects.create_user(username=username,password=password,email=email)
+        Student.objects.create(user=user)
+        user.save()
+        return redirect('login')
     else:
-        form = StudentForm()
-        return render(request, 'login.html', {'form': form})
+        return render(request, 'sign_up.html')
   
  
 def user_logout(request):
@@ -50,7 +50,7 @@ def user_edit(request,pk):
     students = Student.objects.get(pk=pk)
     form = StudentForm(instance=students)
     if request.method == 'POST':
-        form = StudentForm(request.POST, instance=students)
+        form = StudentForm(request.POST, request.FILES, instance=students)
         if form.is_valid():
             form.save()
             first_name = form.cleaned_data.get('first_name')

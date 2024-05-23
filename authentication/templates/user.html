@@ -67,20 +67,18 @@
               <p>Club List</p>
             </a>
           </li>
-          {% if user.is_superuser %}
             <li class="nav-item ">
               <a class="nav-link" href="{% url 'event' %}">
                 <i class="material-icons">library_books</i>
-                <p>Add Event</p>
+                <p>Events</p>
               </a>
             </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="{% url 'notice' %}">
-              <i class="material-icons">notifications</i>
-              <p>Add Notices</p>
-            </a>
-          </li>
-          {% endif %}
+            <li class="nav-item ">
+              <a class="nav-link" href="{% url 'notice' %}">
+                <i class="material-icons">notifications</i>
+                <p>Notices</p>
+              </a>
+            </li>
           <li class="nav-item ">
             <a class="nav-link" href="{% url 'logout' %}">
               <i class="material-icons">logout</i>

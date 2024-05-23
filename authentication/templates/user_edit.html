@@ -68,20 +68,18 @@
               <p>Club List</p>
             </a>
           </li>
-          {% if user.is_superuser %}
             <li class="nav-item ">
               <a class="nav-link" href="{% url 'event' %}">
                 <i class="material-icons">library_books</i>
-                <p>Add Event</p>
+                <p>Events</p>
               </a>
             </li>
           <li class="nav-item ">
             <a class="nav-link" href="{% url 'notice' %}">
               <i class="material-icons">notifications</i>
-              <p>Add Notices</p>
+              <p>Notices</p>
             </a>
           </li>
-          {% endif %}
           <li class="nav-item ">
             <a class="nav-link" href="{% url 'logout' %}">
               <i class="material-icons">logout</i>
@@ -155,91 +153,82 @@
 
                 </div>
                 <div class="card-body">
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="row row mb-1 bg-dark text-white">
-                            {{form.user}}
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <p><strong><h5 class="text-info">First Name</h5></strong></p>
-                                    {{ form.first_name }}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <p><strong><h5 class="text-info">Last Name</h5></strong></p>
-                                    {{ form.last_name }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mb-1 bg-dark text-white ">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <p><strong><h5 class="text-info">Student Id</h5></strong></p>
-                                    {{ form.student_id }}
-                                </div>
-                            </div>
-                            <div class="col-md-6 ">
-                                <div class="form-group">
-                                    <p><strong><h5 class="text-info">Email</h5></strong></p>
-                                    {{ form.email }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row row mb-1 bg-dark text-white">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <p><strong><h5 class="text-info">Username</h5></strong></p>
-                                    {{user}}
-                                </div>
-                            </div>
-                              <div class="col-md-6">
-                                <div class="form-group">
-                                    <p><strong><h5 class="text-info">Profile Photo</h5></strong></p>
-                                    {{form.profile_pic}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row row mb-1 bg-dark text-white">
-                            <div class="col-md-12  ">
-                                <div class="form-group">
-                                    <p><strong><h5 class="text-info">Address</h5></strong></p>
-                                    {{ form.address }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row row mb-1 bg-dark text-white">
-                            <div class="col-md-4  ">
-                                <div class="form-group">
-                                    <p><strong><h5 class="text-info">Phone Number</h5></strong></p>
-                                    {{ form.phone_number }}
-                                </div>
-                            </div>
-                            <div class="col-md-4  ">
-                                <div class="form-group">
-                                    <p><strong><h5 class="text-info">Department</h5></strong></p>
-                                    {{ form.dept }}
-                                </div>
-                            </div>
-                            <div class="col-md-4 ">
-                                <div class="form-group">
-                                    <p><strong><h5 class="text-info">Batch</h5></strong></p>
-                                    {{ form.batch }}
-                                </div>
-                            </div>
-                        </div>
-                          <div class="row row mb-1 bg-dark text-white">
-                            <div class="col-md-12  ">
-                                <div class="form-group">
-                                    <p><strong><h5 class="text-info">About You</h5></strong></p>
-                                    {{ form.about_you }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <button type="submit" class="btn btn-primary pull-right">Update Profile</button>
-                    </form>
-
+                    <form method="POST" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      <div class="row mb-1 bg-dark text-white">
+                          {{ form.user }}
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <p><strong><h5 class="text-info">First Name</h5></strong></p>
+                                  {{ form.first_name }}
+                              </div>
+                          </div>
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <p><strong><h5 class="text-info">Last Name</h5></strong></p>
+                                  {{ form.last_name }}
+                              </div>
+                          </div>
+                      </div>
+                      <div class="row mb-1 bg-dark text-white">
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <p><strong><h5 class="text-info">Student Id</h5></strong></p>
+                                  {{ form.student_id }}
+                              </div>
+                          </div>
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <p><strong><h5 class="text-info">Email</h5></strong></p>
+                                  {{ form.email }}
+                              </div>
+                          </div>
+                      </div>
+                      <div class="row mb-1 bg-dark text-white">
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <p><strong><h5 class="text-info">Username</h5></strong></p>
+                                  {{ user }}
+                              </div>
+                          </div>
+                      </div>
+                      <div class="row mb-1 bg-dark text-white">
+                          <div class="col-md-12">
+                              <div class="form-group">
+                                  <p><strong><h5 class="text-info">Address</h5></strong></p>
+                                  {{ form.address }}
+                              </div>
+                          </div>
+                      </div>
+                      <div class="row mb-1 bg-dark text-white">
+                          <div class="col-md-4">
+                              <div class="form-group">
+                                  <p><strong><h5 class="text-info">Phone Number</h5></strong></p>
+                                  {{ form.phone_number }}
+                              </div>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="form-group">
+                                  <p><strong><h5 class="text-info">Department</h5></strong></p>
+                                  {{ form.dept }}
+                              </div>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="form-group">
+                                  <p><strong><h5 class="text-info">Batch</h5></strong></p>
+                                  {{ form.batch }}
+                              </div>
+                          </div>
+                      </div>
+                      <div class="row mb-1 bg-dark text-white">
+                          <div class="col-md-12">
+                              <div class="form-group">
+                                  <p><strong><h5 class="text-info">About You</h5></strong></p>
+                                  {{ form.about_you }}
+                              </div>
+                          </div>
+                      </div>
+                      <div class="clearfix"></div>
                 </div>
               </div>
             </div>
@@ -252,10 +241,11 @@
                   <h6 class="card-category">CEO / Co-Founder</h6>
                   <h4 class="card-title">{{user.get_full_name}}</h4>
                   <p class="card-description">
-                    {{form.about_you.value}}
-                    
+                    {{form.profile_pic}}
+                    {{form.about_you.value}}<br><br><br>
+                    <button type="submit" class="btn btn-primary pull-center">Update Profile</button>
                   </p>
-                  <button type="submit" class="btn btn-primary btn-round">Follow</button>
+                  </form>
                 </div>
               </div>
             </div>

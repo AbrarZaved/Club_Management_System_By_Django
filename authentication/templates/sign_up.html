@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f0f0f5; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <div style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); border-radius: 15px; padding: 40px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); width: 400px; text-align: center;">
+        <h1 style="font-size: 24px; margin-bottom: 20px; color: #fff;">Sign Up</h1>
+        <form action="{% url 'register' %}" method="POST" style="margin-bottom: 20px;">
+            {% csrf_token %}
+            <div style="margin-bottom: 15px; text-align: left;">
+                <label for="username" style="display: block; margin-bottom: 5px; font-weight: bold; color: #ddd;">Username</label>
+                <input type="text" id="username" name="username" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px; text-align: left;">
+                <label for="email" style="display: block; margin-bottom: 5px; font-weight: bold; color: #ddd;">Email</label>
+                <input type="email" id="email" name="email" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 20px; text-align: left;">
+                <label for="password" style="display: block; margin-bottom: 5px; font-weight: bold; color: #ddd;">Password</label>
+                <input type="password" id="password" name="password" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+            </div>
+            <button type="submit" style="background-color: #28a745; color: #fff; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Sign Up</button>
+        </form>
+        <p style="margin-bottom: 10px; color: #ddd;">Or sign up with:</p>
+        <div style="display: flex; justify-content: center; gap: 20px;">
+            <a href="#" style="background-color: #fff; border-radius: 50%; padding: 10px; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: background-color 0.3s ease;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" alt="Google" style="width: 24px; height: 24px;">
+            </a>
+            <a href="#" style="background-color: #3b5998; border-radius: 50%; padding: 10px; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: background-color 0.3s ease;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" style="width: 24px; height: 24px;">
+            </a>
+        </div>
+    </div>
+
+    <style>
+        a:hover {
+            background-color: #ddd;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</body>
+</html>
