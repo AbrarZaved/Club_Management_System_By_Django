@@ -1,0 +1,36 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DIU Clubs</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1 class="logo">DIU_CLUBS</h1>
+        <div class="auth-buttons">
+          <button style="background-color:black;border-radius:5px;padding:7px;" class="btn-rounded" id="sign-up"><a style="text-decoration:none;" href="{% url 'register' %}" class="btn-rounded">Sign up</a></button>
+          <button style="background-color:black;border-radius:5px;padding:7px;" class="btn-rounded" id="sign-up"><a style="text-decoration:none;" href="{% url 'login' %}" class="btn-rounded">Sign in</a></button>
+        </div>
+      </header>
+      <main>
+        <h2>Welcome To Daffodil International University Clubs</h2>
+        <p>
+          Here you can find every club of the university. You can join to these
+          clubs easily to show your talent and boost up your confident
+        </p>
+        <button class="join-btn"><a style="text-decoration:none;" href="{% url 'login' %}" class="btn-rounded">Join Now!</a></button>
+        <div class="illustrations">
+          <img style="opacity: 0.5" src="{% static 'image1.png' %}" alt="Illustration 1" />
+          <img src="{% static 'image2.png' %}" alt="Illustration 2" />
+          <img style="opacity: 0.5" src="{% static 'image3.png' %}" alt="Illustration 1" />
+          <!-- Add more images as needed -->
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

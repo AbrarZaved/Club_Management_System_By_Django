@@ -16,10 +16,10 @@ def user_login(request):
             login(request,user)
             return redirect('dashboard')
         else:
-            return render(request, 'sign.html') 
+            return render(request, 'authentication/sign.html') 
     
     else:
-        return render(request, 'sign.html')
+        return render(request, 'authentication/sign.html')
 
 
 def user_registration(request):
@@ -32,18 +32,18 @@ def user_registration(request):
         user.save()
         return redirect('login')
     else:
-        return render(request, 'sign_up.html')
+        return render(request, 'authentication/sign_up.html')
   
  
 def user_logout(request):
     logout(request)
-    return redirect('login')
+    return redirect('home')
 
 
 
 def user_profile(request):
     students = Student.objects.filter(user=request.user)
-    return render(request,'user.html',{"students":students})
+    return render(request,'authentication/user.html',{"students":students})
 
 
 def user_edit(request,pk):
@@ -62,6 +62,6 @@ def user_edit(request,pk):
                 user.save()
             return redirect('profile')
         else:
-            return render(request, 'user_edit.html', {'form': form})
+            return render(request, 'authentication/user_edit.html', {'form': form})
     
-    return render(request, 'user_edit.html', {'form': form})
+    return render(request, 'authentication/user_edit.html', {'form': form})
