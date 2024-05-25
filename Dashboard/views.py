@@ -16,9 +16,6 @@ def add_event(request):
     return render(request,'dashboard/add_event.html')
 
 
-
-
-
 def club_list(request):
     club = Club.objects.all()
     return render(request, 'dashboard/clubs.html',{"club":club})
