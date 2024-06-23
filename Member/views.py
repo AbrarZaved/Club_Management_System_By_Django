@@ -21,4 +21,11 @@ def join_request(request):
             return redirect('club')
         
     return render(request,'dashboard/clubs.html')
+
+
+def my_club(request):
+    student = request.user.username[6:]
+    club_name = Club.objects.get(tag=student)
+    join_request = JoinRequest.objects.filter(club=club_name)
+    return render(request,'member/my_club.html',{'join_request':join_request})
         

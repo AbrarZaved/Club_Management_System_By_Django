@@ -6,6 +6,7 @@ class Club(models.Model):
     image = models.ImageField(upload_to='club_image', height_field=None, width_field=None, max_length=None)
     about_club = models.CharField(max_length=200,blank=False)
     club_link = models.URLField(max_length=200,unique=True)
+    tag = models.CharField(max_length=10,blank=False,unique=True,default='')
     
     
     def __str__(self):

@@ -7,19 +7,25 @@
                 <p>Dashboard</p>
               </a>
             </li>
+            {% if "admin_" in request.user.username %}
+              <li class="nav-item {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+              <a class="nav-link" href="{% url 'profile' %}">
+                <i class="material-icons">person</i>
+                <p>Admin Profile</p>
+              </a>
+            </li>
+            <li class="nav-item {% if request.resolver_match.url_name == 'my_club' %}active{% endif %}">
+              <a class="nav-link" href="{% url 'my_club' %}">
+                <i class="material-icons">content_paste</i>
+                <p>My Club</p>
+              </a>
+            {% else %}
             <li class="nav-item {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
               <a class="nav-link" href="{% url 'profile' %}">
                 <i class="material-icons">person</i>
                 <p>User Profile</p>
               </a>
             </li>
-            {% if "admin_" in request.user.username %}
-            <li class="nav-item {% if request.resolver_match.url_name == 'user' %}active{% endif %}">
-              <a class="nav-link" href="{% url 'club' %}">
-                <i class="material-icons">content_paste</i>
-                <p>My Club</p>
-              </a>
-            {% else %}
             <li class="nav-item {% if request.resolver_match.url_name == 'club' %}active{% endif %}">
               <a class="nav-link" href="{% url 'club' %}">
                 <i class="material-icons">content_paste</i>
