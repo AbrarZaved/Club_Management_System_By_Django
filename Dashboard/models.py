@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+
 
 class Club(models.Model):
     club_name = models.CharField(max_length=50,unique=True,blank=False)
