@@ -14,7 +14,7 @@ def user_login(request):
         
         user = authenticate(request, username=username,password=password)
         
-        if user is not "admin":
+        if user != "admin":
             obj = Student.objects.get(user=user)
             stu_id = obj.student_id
         
@@ -41,7 +41,7 @@ def user_registration(request):
         password = request.POST["password"]
         email = request.POST["email"]
         if User.objects.filter(username=username).exists():
-            messages.error(request, 'Username is already taken')
+            messages.warning(request, 'Username is already taken')
             return redirect('register')
         user = User.objects.create_user(username=username,password=password,email=email)
         Student.objects.create(user=user,email=email)

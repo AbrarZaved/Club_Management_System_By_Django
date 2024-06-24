@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from authentication.models import Student
 from Dashboard.models import Club
-from .models import JoinRequest
+from .models import JoinRequest,MemberJoined
 from django.contrib import messages
 
 # Create your views here.abs
@@ -26,6 +26,13 @@ def join_request(request):
 def my_club(request):
     student = request.user.username[6:]
     club_name = Club.objects.get(tag=student)
+    print(club_name)
     join_request = JoinRequest.objects.filter(club=club_name)
+    if request.method == 'POST':
+        status = request.POST['status']
+
     return render(request,'member/my_club.html',{'join_request':join_request})
+
+
+
         
