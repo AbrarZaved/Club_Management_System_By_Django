@@ -145,7 +145,11 @@
                     <img class="img" src="{{form.profile_pic.value.url}}" />
                 </div>
                 <div class="card-body">
-                  <h6 class="card-category">CEO / Co-Founder</h6>
+                  {% if "admin" in user.username %}
+                  <h6 class="card-category">Admin</h6>
+                  {% else %}
+                  <h6 class="card-category">Member</h6>
+                  {% endif %}
                   <h4 class="card-title">{{user.get_full_name}}</h4>
                   <p class="card-description">
                     {{form.profile_pic}}

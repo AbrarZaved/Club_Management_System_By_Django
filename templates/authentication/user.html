@@ -147,6 +147,11 @@
                 </div>
                 <div class="card-body">
                   <h4 class="card-title">{{student.user.get_full_name}}</h4>
+                  {% if "admin" in user.username %}
+                  <h6 class="card-category">Admin</h6>
+                  {% else %}
+                  <h6 class="card-category">Member</h6>
+                  {% endif %}
                   <p class="card-description">
                     {{student.about_you}}
                   </p>
