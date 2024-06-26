@@ -37,8 +37,8 @@
                 <div class="container">
                   <div class="row">
                     <div class="col-md-12">
-                      <button class="btn btn-primary" onclick="filterTable('members')">Club Members</button>
-                      <button class="btn btn-info" onclick="filterTable('requests')">Join Requests</button>
+                      <button class="btn btn-info" onclick="filterTable('members')">Club Members</button>
+                      <button class="btn btn-warning" onclick="filterTable('requests')">Join Requests</button>
                     </div>
                   </div><br>
                   <div class="row">
@@ -87,7 +87,7 @@
                         
                         
                       </table>
-                    <button type="submit" class="btn btn-success pull-right">Update</button>
+                    <button type="submit" class="btn btn-success pull-right" id="update">Update</button>
                     </form>
                   </div>
                 </div>  
@@ -101,18 +101,23 @@
 <script>
 function filterTable(filter) {
   var rows = document.getElementById("clubTable").getElementsByTagName("tr");
+  var update_button = document.getElementById("update");
   for (var i = 0; i < rows.length; i++) {
     if (filter === "members") {
       if (rows[i].classList.contains("members")) {
         rows[i].style.display = "";
+        update_button.style.display = "none";
       } else {
         rows[i].style.display = "none";
+        update_button.style.display = "none";
       }
     } else if (filter === "requests") {
       if (rows[i].classList.contains("requests")) {
         rows[i].style.display = "";
+        update_button.style.display = "block";
       } else {
         rows[i].style.display = "none";
+        update_button.style.display = "none";
       }
     }
   }
