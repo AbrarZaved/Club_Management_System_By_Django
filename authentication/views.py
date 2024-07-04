@@ -6,34 +6,36 @@ from .forms import StudentForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 
+
 def user_login(request):
-    
     if request.method == 'POST':
         username = request.POST["username"]
         password = request.POST["password"]
         
-        user = authenticate(request, username=username,password=password)
-        
-        if user != "admin":
-            obj = Student.objects.get(user=user)
-            stu_id = obj.student_id
-        
+        user = authenticate(request, username=username, password=password)
+        print(user)
+        admin = str(user)
         if user is not None:
-            login(request,user)
-            
-            if stu_id == "":
+            login(request, user)
+            try:
+                obj = Student.objects.get(user=user)
+                stu_id = obj.student_id
+            except Student.DoesNotExist:
+                stu_id = ""
+
+            if stu_id == "" and admin != "admin":
                 messages.info(request, 'Login Successful. Please Complete Your Profile')
             else:
                 messages.success(request, 'Logged In Successfully')
-           
+            
             return redirect('dashboard')
         
         else:
+            messages.error(request, 'Invalid username or password')
             return render(request, 'authentication/sign.html') 
     
     else:
         return render(request, 'authentication/sign.html')
-
 
 def user_registration(request):
     if request.method == 'POST':

@@ -1,4 +1,5 @@
 {% extends "sidebar/main.html" %}
+{% load static %}
 {% block title %}My Club{% endblock %}
 {% block content %}
     <div class="wrapper">
@@ -48,6 +49,9 @@
                         {% csrf_token %}
                         <thead>
                           <tr>
+                            <th scope="col" style="text-align: center;" id="no-req">Sl</th>
+                          </tr>
+                          <tr id="mem-req">
                             <th scope="col" style="text-align: center;">Sl</th>
                             <th scope="col" style="text-align: center;">First</th>
                             <th scope="col" style="text-align: center;">Last</th>
@@ -98,35 +102,7 @@
       </div>
     </div>
   </div>
-<script>
-function filterTable(filter) {
-  var rows = document.getElementById("clubTable").getElementsByTagName("tr");
-  var update_button = document.getElementById("update");
-  for (var i = 0; i < rows.length; i++) {
-    if (filter === "members") {
-      if (rows[i].classList.contains("members")) {
-        rows[i].style.display = "";
-        update_button.style.display = "none";
-      } else {
-        rows[i].style.display = "none";
-        update_button.style.display = "none";
-      }
-    } else if (filter === "requests") {
-      if (rows[i].classList.contains("requests")) {
-        rows[i].style.display = "";
-        update_button.style.display = "block";
-      } else {
-        rows[i].style.display = "none";
-        update_button.style.display = "none";
-      }
-    }
-  }
-}
-document.addEventListener("DOMContentLoaded", function() {
-  filterTable('members');
-});
-
-</script>
+<script src="{% static 'js/my_club.js' %}"></script>
 {% endblock %}
 
 

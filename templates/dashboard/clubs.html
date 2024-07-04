@@ -91,12 +91,13 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> 
   <script>
     $(document).ready(function(){
       $('#exampleModalCenter').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget); // Button that triggered the modal
         var clubName = button.data('club-name'); // Extract info from data-* attributes
+        console.log(clubName)
         var modal = $(this);
         modal.find('.modal-body #modal-club-name').text(clubName); // Update modal's content
         modal.find('.modal-body #club_name').val(clubName);
