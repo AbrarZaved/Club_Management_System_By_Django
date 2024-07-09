@@ -31,7 +31,7 @@
 
 .offline-doc .navbar.navbar-transparent .navbar-brand,
 .offline-doc .navbar.navbar-transparent .collapse .navbar-nav .nav-link {
-  color: #FFF;
+  color: #fff;
 }
 
 .offline-doc .footer {
@@ -71,9 +71,7 @@
   z-index: 2;
 }
 
-
 @media all and (max-width: 991px) {
-
   .offline-doc .navbar .navbar-collapse.collapse,
   .offline-doc .navbar .navbar-collapse.collapse.in,
   .offline-doc .navbar .navbar-collapse.collapsing {
@@ -104,9 +102,6 @@
   }
 }
 
-
-
-
 #map {
   z-index: 2;
   height: calc(100vh - 70px);
@@ -123,4 +118,11 @@
 
 .bd-docs.dark-edition {
   background-color: #fff;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-out, height 0.5s ease-out;
+  height: 0;
+  overflow: hidden;
 }
