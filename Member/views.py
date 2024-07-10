@@ -24,14 +24,27 @@ def join_request(request):
 
 
 def my_club(request):
-    student = request.user.username[6:]
-    club_name = Club.objects.get(tag=student)
-    print(club_name)
+    admin_name = request.user.username[6:]
+    club_name = Club.objects.get(tag=admin_name)
     join_request = JoinRequest.objects.filter(club=club_name)
+    
     if request.method == 'POST':
-        status = request.POST['status']
+        id_list = list(request.POST.getlist('status'))
+        if id_list:
+            for i in id_list:
+                x = int(i)
+                JoinRequest.objects.filter(pk=x).update(status=True)
+                join_request = JoinRequest.objects.get(pk=x)
+                student = join_request.student
+                club = join_request.club
+                MemberJoined.objects.create(student=student, club=club)                
+                join_request.delete()
+            messages.info(request,'Members Approved')    
+            return redirect('my_club')
+    
+    members = MemberJoined.objects.filter(club=club_name)
+    return render(request, 'member/my_club.html', {'join_request': join_request, 'members': members})
 
-    return render(request,'member/my_club.html',{'join_request':join_request})
 
 
 

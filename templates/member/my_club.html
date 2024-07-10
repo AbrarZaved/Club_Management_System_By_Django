@@ -15,16 +15,7 @@
           {% include 'sidebar/navbar.html' %}
       <!-- End Navbar -->
 <div class="content">
-          {% if messages %}
-            {% for message in messages %}
-              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-            {% endfor %}
-          {% endif %}
+        {% include "sidebar/message.html" %}
 
         <div class="container-fluid">
           <div class="row">
@@ -46,39 +37,32 @@
 
                       <table class="table table-striped table-dark">
                         <form method="POST" action="{% url 'my_club' %}">
-                        {% csrf_token %}
+                         {% csrf_token %}
                         <thead>
-                          <tr>
-                            <th scope="col" style="text-align: center;" id="no-req">Sl</th>
-                          </tr>
-                          <tr id="mem-req">
+                          <tr id="header">
                             <th scope="col" style="text-align: center;">Sl</th>
                             <th scope="col" style="text-align: center;">First</th>
                             <th scope="col" style="text-align: center;">Last</th>
                             <th scope="col" style="text-align: center;">Club Name</th>
-                            <th scope="col" style="text-align: center;">Approval</th>
+                            <th scope="col" style="text-align: center;" id="approve">Approval</th>
+                          </tr>
+                          <tr>
+                            <th scope="col" style="text-align: center;" id="no-req">No Joining Requests</th>
+                            <th scope="col" style="text-align: center;" id="no-mem">No Members</th>
                           </tr>
                         </thead>
                         <tbody id="clubTable">
                           {% for x in join_request %}
-                          {% if x.status %}
-                          <div class="alert alert-warning" role="alert">
-                            No Join Requests {{x.status}}
-                          </div>
-                          {% else %}
-
                           <tr class="requests">
                             <td style="text-align: center;">{{ forloop.counter }}</td>
                             <td style="text-align: center;">{{ x.student.user.first_name }}</td>
                             <td style="text-align: center;">{{ x.student.user.last_name }}</td>
                             <td style="text-align: center;">{{ x.club.club_name }}</td>
-                           <td style="text-align: center;"><input type="checkbox" name="status" id="approval_{{ x.id }}"></td>
+                           <td style="text-align: center;"><input type="checkbox" name="status" id="approval_{{ x.id }}" value={{x.id}}></td>
                           </tr>
-
-                          
-                          {% endif %}
                           {% endfor %}
-                          {% for y in club_members %}
+                          
+                          {% for y in members %}
                           <tr class="members">
                             <td style="text-align: center;">{{ forloop.counter }}</td>
                             <td style="text-align: center;">{{ y.student.user.first_name }}</td>
@@ -87,9 +71,7 @@
                             <td style="text-align: center;"></td> <!-- No checkbox for club members -->
                           </tr>
                           {% endfor %}
-                        </tbody>
-                        
-                        
+                        </tbody>                      
                       </table>
                     <button type="submit" class="btn btn-success pull-right" id="update">Update</button>
                     </form>
