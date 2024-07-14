@@ -3,11 +3,12 @@ from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from authentication.models import Student
 from Dashboard.models import Club
-from .models import JoinRequest,MemberJoined
+from .models import JoinRequest,MemberJoined,Notification
 from django.contrib import messages
 
 # Create your views here.abs
 def join_request(request):
+    i=1
     if request.method == 'POST':
         student = Student.objects.get(user=request.user)
         club = Club.objects.get(club_name=request.POST['club_name'])
@@ -17,6 +18,8 @@ def join_request(request):
         else:
             join_request = JoinRequest(student=student,club=club)
             join_request.save()
+            Notification.objects.update_or_create(pending_request=i)
+            i+=1
             messages.success(request,'Request Sent')
             return redirect('club')
         
@@ -46,6 +49,14 @@ def my_club(request):
     return render(request, 'member/my_club.html', {'join_request': join_request, 'members': members})
 
 
+def view_member(request,boom):
+    print(boom)
+    students = Student.objects.get(id=boom)
+    print(students)
+    return render(request, 'member/member_view.html',{'students':students})
 
-
-        
+def delete_member(request,boom):
+    student = Student.objects.get(id=boom)
+    member = MemberJoined.objects.get(student=student)
+    member.delete()
+    return redirect('my_club')

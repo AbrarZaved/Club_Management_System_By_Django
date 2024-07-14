@@ -15,6 +15,9 @@ class JoinRequest(models.Model):
 
     def __str__(self):
         return f'{self.student.student_id} - {self.club.club_name}'
+    
+    def get_total_request(self):
+        return JoinRequest.objects.filter(status=False,club=self.club).count()
 
 class MemberJoined(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -34,3 +37,15 @@ def create_member_joined(sender, instance, created, **kwargs):
             student=instance.student,
             club=instance.club
         )
+
+
+class Notification(models.Model):
+    pending_request = models.IntegerField(default=0)
+    event = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.pending_request)
+
+    def notifications(self):
+        return self.objects.all().count()
+    

@@ -1,0 +1,61 @@
+/* Ensuring the modal has a higher z-index */
+.modal {
+  z-index: 1050;
+}
+
+/* Ensuring any overlay does not intercept pointer events */
+.modal-backdrop {
+  z-index: 1040;
+}
+
+/* General Styles for the modal content */
+.new {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.modal-content {
+  background-color: black;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 8px rgba(245, 235, 235, 0.2);
+  overflow: hidden;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+}
+.gradient-custom {
+  background: linear-gradient(
+    to right bottom,
+    rgb(4, 209, 192),
+    rgb(216, 156, 140)
+  );
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  flex: 0 0 40%;
+}
+.gradient-custom img {
+  border-radius: 50%;
+  margin-bottom: 20px;
+  width: 100px;
+}
+.modal-body {
+  padding: 20px;
+  flex: 1;
+}
+.modal-body h6 {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  color: #333;
+}
+.modal-body .text-muted {
+  color: #6c757d;
+}
+.modal-body .row + .row {
+  margin-top: 20px;
+}

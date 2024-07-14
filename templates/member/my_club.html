@@ -14,7 +14,7 @@
           </a></div>
           {% include 'sidebar/navbar.html' %}
       <!-- End Navbar -->
-<div class="content">
+      <div class="content">
         {% include "sidebar/message.html" %}
 
         <div class="container-fluid">
@@ -44,6 +44,7 @@
                             <th scope="col" style="text-align: center;">First</th>
                             <th scope="col" style="text-align: center;">Last</th>
                             <th scope="col" style="text-align: center;">Club Name</th>
+                            <th scope="col" style="text-align: center;">Profile</th>
                             <th scope="col" style="text-align: center;" id="approve">Approval</th>
                           </tr>
                           <tr>
@@ -58,19 +59,24 @@
                             <td style="text-align: center;">{{ x.student.user.first_name }}</td>
                             <td style="text-align: center;">{{ x.student.user.last_name }}</td>
                             <td style="text-align: center;">{{ x.club.club_name }}</td>
+                            <td style="text-align: center;">a</td>
                            <td style="text-align: center;"><input type="checkbox" name="status" id="approval_{{ x.id }}" value={{x.id}}></td>
                           </tr>
                           {% endfor %}
                           
                           {% for y in members %}
                           <tr class="members">
-                            <td style="text-align: center;">{{ forloop.counter }}</td>
-                            <td style="text-align: center;">{{ y.student.user.first_name }}</td>
-                            <td style="text-align: center;">{{ y.student.user.last_name }}</td>
-                            <td style="text-align: center;">{{ y.club.club_name }}</td>
-                            <td style="text-align: center;"></td> <!-- No checkbox for club members -->
+                              <td style="text-align: center;">{{ forloop.counter }}</td>
+                              <td style="text-align: center;">{{ y.student.user.first_name }}</td>
+                              <td style="text-align: center;">{{ y.student.user.last_name }}</td>
+                              <td style="text-align: center;">{{ y.club.club_name }}</td>
+                              <td scope="col" style="text-align: center;">
+                                  <a href="#" data-toggle="modal" data-target="#viewProfile{{ y.student.id }}"><i class="bi bi-yelp"></i></a>
+                              </td>
+                              <td style="text-align: center;"></td> <!-- No checkbox for club members -->
                           </tr>
                           {% endfor %}
+
                         </tbody>                      
                       </table>
                     <button type="submit" class="btn btn-success pull-right" id="update">Update</button>
@@ -82,9 +88,63 @@
           </div>
         </div>
       </div>
+      
     </div>
   </div>
+<div class="new">
+  {% for member in members %}
+  <div class="modal fade" id="viewProfile{{ member.student.id }}" tabindex="-1" role="dialog" aria-labelledby="viewProfileModalLabel{{ member.student.id }}" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+              <div class="modal-header gradient-custom">
+                  <img src="{{ member.student.profile_pic.url }}" alt="Avatar" class="rounded-circle">
+                  <h5 id="viewProfileModalLabel{{ member.student.id }}">{{ member.student.user.get_full_name }}</h5>
+                  <i class="bi bi-person">Member</i>
+              </div>
+              <div class="modal-body">
+                  <h6>Information</h6>
+                  <hr class="mt-0 mb-4">
+                  <div class="row">
+                      <div class="col-6 mb-3">
+                          <h6>Email</h6>
+                          <p class="text-muted">{{ member.student.user.email }}</p>
+                      </div>
+                      <div class="col-6 mb-3">
+                          <h6>Phone</h6>
+                          <p class="text-muted">{{ member.student.phone_number }}</p>
+                      </div>
+                  </div>
+                  <h6>Credentials</h6>
+                  <hr class="mt-0 mb-4">
+                  <div class="row">
+                      <div class="col-6 mb-3">
+                          <h6>Student ID</h6>
+                          <p class="text-muted">{{ member.student }}</p>
+                      </div>
+                      <div class="col-6 mb-3">
+                          <h6>Department</h6>
+                          <p class="text-muted">{{ member.student.dept }}</p>
+                      </div>
+                  </div>
+              </div>
+                <div class="d-flex justify-content-end">
+                  <a href="{% url 'view_member' member.student.id %}" class="text-white" style="font-size: 20px; position: relative;" title="Details View"><i class="bi bi-view-list"></i></a>
+                  <a href="{% url 'delete_member' member.student.id %}" class="text-white" style="font-size: 20px; position: relative;" title="Delete Member"><i class="bi bi-trash-fill"></i></a>
+                  
+                </div>
+          </div>
+      </div>
+  </div>
+  {% endfor %}
+</div>
+
+
+
 <script src="{% static 'js/my_club.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<link href="{% static 'css/view_member.css' %}" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 {% endblock %}
 
 
