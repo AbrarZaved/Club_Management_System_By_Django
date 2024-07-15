@@ -4,6 +4,7 @@ from Dashboard.models import Club
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+
 class JoinRequest(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
@@ -11,13 +12,14 @@ class JoinRequest(models.Model):
     status = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = ('student', 'club')
+        unique_together = ("student", "club")
 
     def __str__(self):
-        return f'{self.student.student_id} - {self.club.club_name}'
-    
+        return f"{self.student.student_id} - {self.club.club_name}"
+
     def get_total_request(self):
-        return JoinRequest.objects.filter(status=False,club=self.club).count()
+        return JoinRequest.objects.filter(status=False, club=self.club).count()
+
 
 class MemberJoined(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -25,31 +27,29 @@ class MemberJoined(models.Model):
     join_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('student', 'club')
+        unique_together = ("student", "club")
 
     def __str__(self):
-        return f'{self.student.student_id} - {self.club.club_name}'
+        return f"{self.student.student_id} - {self.club.club_name}"
+
 
 @receiver(post_save, sender=JoinRequest)
 def create_member_joined(sender, instance, created, **kwargs):
     if instance.status:  # Only proceed if status is True
-        MemberJoined.objects.get_or_create(
-            student=instance.student,
-            club=instance.club
-        )
-
-
+        MemberJoined.objects.get_or_create(student=instance.student, club=instance.club)
 
 
 class Notification(models.Model):
-    JOIN_REQUEST = 'join_request'
-    EVENTS = 'events'
-    
+    JOIN_REQUEST = "join_request"
+    EVENTS = "events"
+    NOTICES = "notices"
+
     CATEGORY_CHOICES = [
-        (JOIN_REQUEST, 'Join Request'),
-        (EVENTS, 'Events'),
+        (JOIN_REQUEST, "Join Request"),
+        (EVENTS, "Events"),
+        (NOTICES, "Notices"),
     ]
-    
+
     notification_type = models.CharField(
         max_length=100,
         choices=CATEGORY_CHOICES,
@@ -57,12 +57,9 @@ class Notification(models.Model):
 
     total = models.IntegerField(default=0)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
-    
-    
+
     def __str__(self):
         return self.notification_type
 
     def notifications(self):
         return Notification.objects.filter(club=self.club).count()
-
-    
