@@ -3,23 +3,30 @@ from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from authentication.models import Student
 from Dashboard.models import Club
-from .models import JoinRequest,MemberJoined,Notification
+from .models import JoinRequest,MemberJoined, Notification
 from django.contrib import messages
 
 # Create your views here.abs
 def join_request(request):
-    i=1
     if request.method == 'POST':
         student = Student.objects.get(user=request.user)
         club = Club.objects.get(club_name=request.POST['club_name'])
-        if JoinRequest.objects.filter(student=student,club=club).exists():
+        
+        if MemberJoined.objects.filter(student=student,club=club).exists():
+            messages.info(request,"You are already Member of this Club")
+            return redirect ('club')
+        elif JoinRequest.objects.filter(student=student,club=club).exists():
             messages.info(request,'Request Already Sent')
             return redirect('club')
         else:
             join_request = JoinRequest(student=student,club=club)
             join_request.save()
-            Notification.objects.update_or_create(pending_request=i)
-            i+=1
+            total_requests = JoinRequest.objects.filter(club=club).count()
+            Notification.objects.update_or_create(
+                notification_type='join_request',
+                club=club,
+                defaults={'total': total_requests}
+            )
             messages.success(request,'Request Sent')
             return redirect('club')
         
@@ -40,10 +47,22 @@ def my_club(request):
                 join_request = JoinRequest.objects.get(pk=x)
                 student = join_request.student
                 club = join_request.club
-                MemberJoined.objects.create(student=student, club=club)                
+                MemberJoined.objects.create(student=student, club=club)
                 join_request.delete()
+                total_requests = JoinRequest.objects.filter(club=club_name).count()
+                Notification.objects.update_or_create(
+                    notification_type='join_request',
+                    club=club,
+                    defaults={'total': total_requests}
+                )
             messages.info(request,'Members Approved')    
             return redirect('my_club')
+    
+    total_requests = JoinRequest.objects.filter(club=club_name).count()
+    
+    if total_requests == 0:
+        noti = Notification.objects.filter(notification_type='join_request', club=club_name)
+        noti.delete()
     
     members = MemberJoined.objects.filter(club=club_name)
     return render(request, 'member/my_club.html', {'join_request': join_request, 'members': members})
@@ -56,7 +75,9 @@ def view_member(request,boom):
     return render(request, 'member/member_view.html',{'students':students})
 
 def delete_member(request,boom):
+    admin_name = request.user.username[6:]
+    club_name = Club.objects.get(tag=admin_name)
     student = Student.objects.get(id=boom)
-    member = MemberJoined.objects.get(student=student)
+    member = MemberJoined.objects.get(student=student,club=club_name)
     member.delete()
     return redirect('my_club')

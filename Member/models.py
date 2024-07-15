@@ -39,13 +39,30 @@ def create_member_joined(sender, instance, created, **kwargs):
         )
 
 
-class Notification(models.Model):
-    pending_request = models.IntegerField(default=0)
-    event = models.IntegerField(default=0)
 
+
+class Notification(models.Model):
+    JOIN_REQUEST = 'join_request'
+    EVENTS = 'events'
+    
+    CATEGORY_CHOICES = [
+        (JOIN_REQUEST, 'Join Request'),
+        (EVENTS, 'Events'),
+    ]
+    
+    notification_type = models.CharField(
+        max_length=100,
+        choices=CATEGORY_CHOICES,
+    )
+
+    total = models.IntegerField(default=0)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    
+    
     def __str__(self):
-        return str(self.pending_request)
+        return self.notification_type
 
     def notifications(self):
-        return self.objects.all().count()
+        return Notification.objects.filter(club=self.club).count()
+
     
