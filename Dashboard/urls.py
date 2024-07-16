@@ -8,7 +8,7 @@ urlpatterns = [
     path('club_list',views.club_list,name='club'),
     path('notice',views.notice,name='notice'),
     path('add_event',views.add_event,name='event'),
-    path('delete_notice/<notice_id>',views.delete_notice,name='delete'),
+    path('delete_notice/<str:title>',views.delete_notice,name='delete'),
     path('',views.home,name='home'),
     
 ]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

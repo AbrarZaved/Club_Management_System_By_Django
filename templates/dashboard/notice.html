@@ -16,6 +16,7 @@
                <!-- End Navbar -->
                <div class="content">
                   <div class="container-fluid">
+                     {% include "sidebar/message.html" %}
                     <div class="row">
                       <div class="col-md-12">
                         <div class="card">
@@ -29,19 +30,24 @@
                           </div>
                           <div class="container">
                             <div class="row">
-                              {% for things in form_data %}
-                                <div class="col-6">
-                                  <div class="card text-white bg-success col-12">
-                                      <h4 class="card-body text-white"><strong> {{ things.title|title }} </strong></h4><br>
-                                      <p class="card-body text-white"> {{ things.description }}</p>
-                                      {% if "admin" in user.username %}
-                                       <a class="col-1" href="{% url 'delete' things.id %}">
-                                          <i class="material-icons">delete</i>
+                     
+                              {% if form_data %}
+                                 {% for title, description in form_data.items %}
+                                 <div class="col-6">
+                                    <div class="card text-white bg-success col-12">
+                                       <h4 class="card-body text-white"><strong>{{ title|title }}</strong></h4><br>
+                                       <p class="card-body text-white">{{ description|linebreaksbr }}</p>
+                                       {% if "admin" in user.username %}
+                                       <a class="col-1" href="{% url 'delete' title %}">
+                                             <button class="btn btn-success btn-sm delete-button">
+                                                <i class="material-icons">delete</i>
+                                             </button>
                                        </a>
                                        {% endif %}
-                                  </div>
-                                </div>
-                              {% endfor %}
+                                    </div>
+                                 </div>
+                                 {% endfor %}
+                              {% endif %}
                             </div>
                           </div>
                         <div class="col-md-12">

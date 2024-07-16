@@ -62,7 +62,7 @@ def user_logout(request):
 
 
 def user_profile(request):
-    students = Student.objects.filter(user=request.user)
+    students = Student.objects.get(user=request.user)
     return render(request, "authentication/user.html", {"students": students})
 
 

@@ -109,6 +109,11 @@
                           <a class="dropdown-item" href="javascript:void(0)">You have {{notification.total}} event approval</a>
                         {% endfor %}
                       {% endif %}
+                      {% if pending_notices %}
+                        {% for notification in pending_notices %}
+                          <a class="dropdown-item" href="javascript:void(0)">You have {{notification.total}} notices from {{notification.club}} club</a>
+                        {% endfor %}
+                      {% endif %}
                     
                     {% else %}
                       <p class="dropdown-item"> No Notifications </p>
