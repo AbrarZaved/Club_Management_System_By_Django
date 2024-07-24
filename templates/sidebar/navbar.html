@@ -88,6 +88,7 @@
                   </a>
                 </li>
                 <li class="nav-item dropdown">
+                
                   <a class="nav-link" href="javascript:void(0)" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="material-icons" >notifications</i>
                     {% if total_notifications %}<span class="notification" > {{total_notifications}} </span>{% else %} {% endif %}
@@ -95,6 +96,7 @@
                       Some Actions
                     </p>
                   </a>
+    
                   <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                     {% if total_notifications %}
                       
@@ -111,7 +113,7 @@
                       {% endif %}
                       {% if pending_notices %}
                         {% for notification in pending_notices %}
-                          <a class="dropdown-item" href="javascript:void(0)">You have {{notification.total}} notices from {{notification.club}} club</a>
+                          <a class="dropdown-item" href="{% url 'notice' %}">You have {{notification.total}} {% if notification.total == 1 %} notice {% else %} notices {% endif %} from {{notification.club}}</a>
                         {% endfor %}
                       {% endif %}
                     

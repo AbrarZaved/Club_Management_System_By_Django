@@ -49,6 +49,10 @@ class Notification(models.Model):
         (EVENTS, "Events"),
         (NOTICES, "Notices"),
     ]
+    ADMIN = "admin"
+    GENERAL_USER = "general_user"
+
+    USER_TYPES = [(ADMIN, "Admin"), (GENERAL_USER, "General User")]
 
     notification_type = models.CharField(
         max_length=100,
@@ -57,6 +61,7 @@ class Notification(models.Model):
 
     total = models.IntegerField(default=0)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    user_type = models.CharField(max_length=100, choices=USER_TYPES,null=True,default=GENERAL_USER)
 
     def __str__(self):
         return self.notification_type

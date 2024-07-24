@@ -25,6 +25,7 @@ def join_request(request):
             Notification.objects.update_or_create(
                 notification_type='join_request',
                 club=club,
+                user_type="admin",
                 defaults={'total': total_requests}
             )
             messages.success(request,'Request Sent')
@@ -53,6 +54,7 @@ def my_club(request):
                 Notification.objects.update_or_create(
                     notification_type='join_request',
                     club=club,
+                    user_type="admin",
                     defaults={'total': total_requests}
                 )
             messages.info(request,'Members Approved')    

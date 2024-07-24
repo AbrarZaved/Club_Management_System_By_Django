@@ -40,6 +40,7 @@ def notice(request):
             Notification.objects.update_or_create(
                 notification_type="notices",
                 club=club_name,
+                user_type="general_user",
                 defaults={"total": notice_count},
             )
             messages.success(request, "Notice Added")
@@ -47,31 +48,44 @@ def notice(request):
         else:
             form_data = {}
             total = Notice.objects.filter(club__club_name=club_name).count()
-            if total > 0:
-                title = Notice.objects.get(club__club_name=club_name).title
-                description = Notice.objects.get(club__club_name=club_name).description
-                form_data[title] = description
+            total_id = list(
+                Notice.objects.filter(club__club_name=club_name).values_list(
+                    "id", flat=True
+                )
+            )
+
+            print(total_id)
+            if total_id:
+                for i in total_id:
+                    title = Notice.objects.get(id=i, club__club_name=club_name).title
+                    description = Notice.objects.get(
+                        id=i, club__club_name=club_name
+                    ).description
+                    form_data[title] = description
                 print(form_data)
                 return render(
                     request, "dashboard/notice.html", {"form_data": form_data}
                 )
-            
+
             return render(request, "dashboard/notice.html", {"form_data": form_data})
     else:
         form_data = {}
-        total_data = 0
-        clubs = list(MemberJoined.objects.filter(student=student))
-        club = [i.club.club_name for i in clubs]
-        for i in club:
-            total_data = Notice.objects.filter(club__club_name=i).count()
-            if total_data == 0:
-                club.remove(i)
 
-        if total_data > 0:
-            for i in club:
-                title = Notice.objects.get(club__club_name=i).title
-                description = Notice.objects.get(club__club_name=i).description
-                form_data[title] = description
+        clubs = MemberJoined.objects.filter(student=student).values_list(
+            "club__club_name", flat=True
+        )
+
+        clubs_with_notices = []
+        for club_name in clubs:
+            if Notice.objects.filter(club__club_name=club_name).exists():
+                clubs_with_notices.append(club_name)
+
+        if clubs_with_notices:
+            for club_name in clubs_with_notices:
+                notices = Notice.objects.filter(club__club_name=club_name)
+                for notice in notices:
+                    form_data[notice.title] = notice.description
+
         return render(request, "dashboard/notice.html", {"form_data": form_data})
 
 
