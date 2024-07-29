@@ -80,9 +80,13 @@ WSGI_APPLICATION = 'DIU_CLUBS.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "DIU_CLUBS",
+        "USER": "root",
+        "PASSWORD": "the.in5hulk",
+        "HOST": "127.0.0.1",
+        "PORT": "3306",
     }
 }
 
@@ -106,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CRISPY_TEMPLATE_PACK='uni_form'
-#AUTH_USER_MODEL = 'Dashboard.Student'
+# AUTH_USER_MODEL = 'Dashboard.Student'
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -130,5 +134,3 @@ STATICFILES_DIRS = [
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-
-
