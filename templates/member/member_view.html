@@ -77,10 +77,10 @@
       <div class="card">
         <div class="gradient-custom">
           <img
-            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+            src="{{ students.profile_pic.url }}"
             alt="Avatar" />
           <h5>{{students.user.get_full_name}}</h5>
-          <p>Web Designer</p>
+          <p>Member</p>
           <i class="far fa-edit mb-5"></i>
         </div>
         <div class="card-body">
@@ -89,11 +89,11 @@
           <div class="row">
             <div class="col-6 mb-3">
               <h6>Email</h6>
-              <p class="text-muted">info@example.com</p>
+              <p class="text-muted">{{students.email}}</p>
             </div>
             <div class="col-6 mb-3">
               <h6>Phone</h6>
-              <p class="text-muted">123 456 789</p>
+              <p class="text-muted">{{students.phone_number}}</p>
             </div>
           </div>
           <h6>Projects</h6>
