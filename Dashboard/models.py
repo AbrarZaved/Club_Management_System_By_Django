@@ -18,6 +18,8 @@ class Notice(models.Model):
     title = models.CharField(max_length=50)
     club = models.ForeignKey(Club, on_delete=models.CASCADE, null=True)
     description = models.CharField(max_length=500)
+    read = models.BooleanField(default=False)
+    
 
     def __str__(self):
         return self.title

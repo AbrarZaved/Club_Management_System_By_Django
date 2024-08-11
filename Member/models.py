@@ -62,9 +62,18 @@ class Notification(models.Model):
     total = models.IntegerField(default=0)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
     user_type = models.CharField(max_length=100, choices=USER_TYPES,null=True,default=GENERAL_USER)
-
+    Student = models.ForeignKey(MemberJoined,on_delete=models.CASCADE,null=True)
+    
     def __str__(self):
-        return self.notification_type
+        return str(self.Student)+" "+self.notification_type
 
     def notifications(self):
         return Notification.objects.filter(club=self.club).count()
+
+
+class Status(models.Model):
+    student = models.ForeignKey(MemberJoined, verbose_name="Students", on_delete=models.CASCADE)
+    total = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.student)
