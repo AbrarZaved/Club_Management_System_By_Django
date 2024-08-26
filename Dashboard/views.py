@@ -48,10 +48,6 @@ def notice(request):
                     Student=member,
                     defaults={"total": notice_count}
                 )
-                Status.objects.update_or_create(
-                    student=member,
-                    defaults={'total':notice_count}
-                )
             messages.success(request, "Notice Added")
             return redirect("notice")
         else:
