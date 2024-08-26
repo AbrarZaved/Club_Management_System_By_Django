@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Responsive Signup/Login form</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Raleway:300,600" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1"><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'><link rel="stylesheet" href="{% static 'style.css' %}">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="container">
+   <section id="formHolder">
+
+      <div class="row">
+
+         <!-- Brand Box -->
+         <div class="col-sm-6 brand">
+            <a href="#" class="logo">DIU_CLUBS</a>
+
+            <div class="heading">
+               <h2>DIU CLUBS</h2>
+               <p>Your Right Choice</p>
+            </div>
+
+            <div class="success-msg">
+               <p>Great! You are one of our members now</p>
+               <a href="#" class="profile">Your Profile</a>
+            </div>
+         </div>
+
+
+         <!-- Form Box -->
+         <div class="col-sm-6 form">
+
+            <!-- Login Form -->
+            <div class="login form-peice switched">
+               <form class="login-form" action="{% url 'login' %}" method="POST">
+                  {% csrf_token %}
+                  <div class="form-group">
+                     <label for="text">Student ID</label>
+                     <input type="text" name="username" id="loginemail" required>
+                  </div>
+
+                  <div class="form-group">
+                     <label for="loginPassword">Password</label>
+                     <input type="password" name="password" id="loginPassword" required>
+                  </div>
+
+                  <div class="CTA">
+                     <input type="submit" value="Login">
+                     <a href="#" class="switch">I'm New</a>
+                  </div>
+               </form>
+            </div><!-- End Login Form -->
+
+
+            <!-- Signup Form -->
+            <div class="signup form-peice">
+               <form class="signup-form" action="{% url 'register' %}" method="POST">
+                  {% csrf_token %}
+                  <div class="form-group row">
+                     <div class="col-sm-6">
+                        <label for="text" class="col-sm col-form-label">First Name</label>
+                         {{form.first_name}}
+                         <span class="error"></span>
+                     </div>
+                     <div class="col-sm-6">
+                        <label for="text" class="col-sm col-form-label">Last Name</label>
+                        {{form.last_name}}
+                        <span class="error"></span>
+                    </div>
+                 </div>
+                                   
+                 <div class="form-group row">
+                     <div class="col-sm-6">
+                        <label for="text" class="col-sm col-form-label">Student ID</label>
+                        {{form.student_id}}
+                        <span class="error"></span>
+                     </div>
+                     <div class="col-sm-6">
+                        <label for="email" class="col-sm col-form-label">Email Address</label>
+                        {{form.email}}
+                        <span class="error"></span>
+                     </div>
+                  </div>
+
+
+               <div class="form-group row">
+                     
+                  <div class="col-sm-6">
+                     <label for="text" class="col-sm col-form-label">Phone Number</label>
+                      {{form.phone_number}}
+                      <span class="error"></span>
+                  </div>
+                  <div class="col-sm-6">
+                     <label for="text" class="col-sm col-form-label">Department</label>
+                     {{form.dept}}
+                     <span class="error"></span>
+                 </div>
+              </div>
+              <div class="form-group row">
+                     
+               <div class="col-sm-6">
+                  <label for="text" class="col-sm col-form-label">Batch</label>
+                   {{form.batch}}
+                   <span class="error"></span>
+               </div>
+               <div class="col-sm-6">
+                  <label for="text" class="col-sm col-form-label">Hobbies</label>
+                  {{form.hobbies}}
+                  <span class="error"></span>
+              </div>
+           </div>
+              <div class="form-group">
+               <label for="text">Adderss</label>
+               {{form.address}}
+               <span class="error"></span>
+            </div>
+
+
+                  <div class="form-group">
+                     <label for="text">About You</label>
+                     {{form.about_you}}
+                  </div>
+                  <div class="form-group">
+                     <label for="password">Password</label>
+                     {{form.password1}}
+                     <span class="error"></span>
+                  </div>
+                  <div class="form-group">
+                     <label for="passwordCon">Confirm Password</label>
+                     {{form.password2}}
+                     <span class="error"></span>
+                  </div>
+
+                  <div class="CTA">
+                     <input type="submit" value="Signup Now" id="submit">
+                     <a href="#" class="switch">I have an account</a>
+                  </div>
+               </form>
+            </div><!-- End Signup Form -->
+         </div>
+      </div>
+
+   </section>
+
+
+
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script><script  src="{% static 'script.js' %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+{% if user.is_authenticated %}
+  {% include "base.html" %}
+  Hi this is {{user}}
+{% else %}
+  Log in first. Here is the log in link <a href="{% url 'login' %}">Log In</a>
+{% endif %}
+
+
+
+
+
