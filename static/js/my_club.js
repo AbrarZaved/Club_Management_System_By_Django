@@ -8,6 +8,7 @@ function filterTable(filter) {
   var rowLength = rows.length;
   var anyRequestsVisible = false;
   var anyMembersVisible = false;
+
   for (var i = 0; i < rowLength; i++) {
     var row = rows[i];
 
@@ -50,3 +51,4 @@ function filterTable(filter) {
 document.addEventListener("DOMContentLoaded", function () {
   filterTable("members");
 });
+
