@@ -6,6 +6,7 @@ from authentication.models import Student
 from Member.models import Notification, MemberJoined, Status
 from django.http import HttpResponse, JsonResponse
 import json
+from django.db.models import Q
 
 
 def home(request):
@@ -113,7 +114,8 @@ def delete_notice(request, title):
 def search_clubs(request):
     if request.method == "POST":
         club_name = json.loads(request.body).get("text")
-        data = Club.objects.filter(club_name__icontains=club_name).values(
-            "club_name", "image", "about_club", "club_link", "tag"
-        )
+        data = Club.objects.filter(
+            Q(club_name__icontains=club_name) | Q(tag=club_name)
+        ).values("club_name", "image", "about_club", "club_link", "tag")
+
         return JsonResponse(list(data), safe=False)
