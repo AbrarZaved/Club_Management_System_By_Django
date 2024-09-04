@@ -1,50 +1,56 @@
 {% extends "sidebar/main.html" %}
+{% load static %}
 {% block title %}Clubs{% endblock %}
-{% block content %}
-    <div class="wrapper">
-      <div class="sidebar" data-color="purple" data-background-color="black" data-image="css/assets/img/sidebar-2.jpg">
-        <!--
-          Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
-  
-          Tip 2: you can also add an image using data-image tag
-      -->
-        <div class="logo"><a href="http://www.creative-tim.com" class="simple-text logo-normal">
-            DIU_CLUBS
-          </a></div>
-          {% include 'sidebar/navbar.html' %}
-      <!-- End Navbar -->
-        <div class="content">
 
-        {% include "sidebar/message.html" %}
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card">
-                <div class="card-header card-header-primary">
-                  <h4 class="card-title">Clubs</h4>
-                  <p class="card-category"> you would like to join</p>
-                </div>
-                <div class="container">
-                  <div class="row">
+{% block content %}
+<div class="wrapper">
+  <div class="sidebar" data-color="purple" data-background-color="black" data-image="{% static 'css/assets/img/sidebar-2.jpg' %}">
+    <!--
+      Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
+      Tip 2: You can also add an image using the data-image tag
+    -->
+    <div class="logo">
+      <a href="http://www.creative-tim.com" class="simple-text logo-normal">
+        DIU_CLUBS
+      </a>
+    </div>
+    {% include 'sidebar/navbar.html' %}
+    <!-- End Navbar -->
+    <div class="content">
+      {% include "sidebar/message.html" %}
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header card-header-primary">
+                <h4 class="card-title">Clubs</h4>
+                <p class="card-category">you would like to join</p>
+              </div>
+              <div class="container">
+                <div id="all_clubs">
+                  <div class="row" >
                     {% for things in club %}
-                      <div class="col-md-4">
-                        <div class="card mb-3" style="width: 18rem;">
-                          <img src="{{ things.image.url }}" class="card-img-top" alt="...">
-                          <div class="card-body">
-                            <h5 class="card-title">{{ things.club_name }}</h5>
-                            <p class="card-text">{{ things.about_club }}</p>
-                            <div class="d-flex justify-content-between">
-                              <a href="{{ things.club_link }}" class="btn btn-primary">view more</a>
-                              <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="{{ things.club_name }}">
-                                Join
-                              </button>
-                            </div>
+                    <div class="col-md-4" >
+                      <div class="card mb-3" style="width: 18rem;">
+                        <img src="{{ things.image.url }}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                          <h5 class="card-title">{{ things.club_name }}</h5>
+                          <p class="card-text">{{ things.about_club }}</p>
+                          <div class="d-flex justify-content-between">
+                            <a href="{{ things.club_link }}" class="btn btn-primary">View More</a>
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="{{ things.club_name }}">
+                              Join
+                            </button>
                           </div>
                         </div>
                       </div>
+                    </div>
                     {% endfor %}
                   </div>
-                </div>  
+                </div>
+                <div class="row" id="result_clubs">
+                  <!-- Content will be dynamically inserted here -->
+                </div>
               </div>
             </div>
           </div>
@@ -52,49 +58,49 @@
       </div>
     </div>
   </div>
+</div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'join_request' %}" method="POST">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="exampleInputEmail1" class="text-dark">Dear {{ user.get_full_name }}</label>
+            <small id="emailHelp" class="form-text text-dark">
+              Would you like to join <span id="modal-club-name"></span>?
+            </small>
           </div>
-          <div class="modal-body">
-          <form action="{% url 'join_request' %}" method="POST">
-            {% csrf_token %}
-            <div class="form-group">
-              <label for="exampleInputEmail1" class="text-dark">Dear </label>
-              <label for="exampleInputEmail1" class="text-dark">{{ user.get_full_name }}</label>
-              <small id="emailHelp" class="form-text text-dark">
-                Would you like to join <span id="modal-club-name"></span>?
-              </small>
-            </div>
-            <input type="hidden" id="club_name" name="club_name" value="">
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-              <button type="submit" class="btn btn-primary">YES</button>
-            </div>
-          </form>
-        </div>
+          <input type="hidden" id="club_name" name="club_name" value="">
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            <button type="submit" class="btn btn-primary">YES</button>
+          </div>
+        </form>
       </div>
     </div>
-  </div> 
-  <script>
-    $(document).ready(function(){
-      $('#exampleModalCenter').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-        var clubName = button.data('club-name'); // Extract info from data-* attributes
-        console.log(clubName)
-        var modal = $(this);
-        modal.find('.modal-body #modal-club-name').text(clubName); // Update modal's content
-        modal.find('.modal-body #club_name').val(clubName);
-      });
+  </div>
+</div>
+
+<script>
+  $(document).ready(function(){
+    $('#exampleModalCenter').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget); // Button that triggered the modal
+      var clubName = button.data('club-name'); // Extract info from data-* attributes
+      var modal = $(this);
+      modal.find('.modal-body #modal-club-name').text(clubName); // Update modal's content
+      modal.find('.modal-body #club_name').val(clubName);
     });
-  </script>
+  });
+</script>
+
+<script src="{% static 'js/searchClub.js' %}"></script>
 {% endblock %}
-
-
