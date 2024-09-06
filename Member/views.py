@@ -6,7 +6,8 @@ from .models import JoinRequest, MemberJoined, Notification
 from django.contrib import messages
 import json
 from django.db.models import Q
-from django.core import serializers
+from rest_framework.renderers import JSONRenderer
+from authentication.serializer import StudentSerializer
 
 
 # Create your views here.abs
@@ -134,3 +135,10 @@ def search_member(request):
 
         data = list(members)
         return JsonResponse(data, safe=False)
+
+
+def view_student(request):
+    all_data = Student.objects.all()
+    serializer = StudentSerializer(all_data, many=True)
+    json_data = JSONRenderer().render(serializer.data)
+    return HttpResponse(json_data, content_type="application.json")
