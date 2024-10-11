@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from rest_framework.viewsets import ModelViewSet
+
+from authentication.serializer import StudentSerializer
 from .models import Student, UserRegistration
 from .forms import StudentForm
 from django.contrib.auth.models import User
@@ -85,3 +88,8 @@ def user_edit(request, pk):
             return render(request, "authentication/user_edit.html", {"form": form})
 
     return render(request, "authentication/user_edit.html", {"form": form})
+
+
+class memberList(ModelViewSet):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer

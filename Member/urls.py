@@ -9,5 +9,4 @@ urlpatterns = [
     path("view_member/<int:boom>", views.view_member, name="view_member"),
     path("delete_member/<int:boom>", views.delete_member, name="delete_member"),
     path("search_member", csrf_exempt(views.search_member), name="search_member"),
-    path("view_student", views.view_student, name="view_student"),
 ]

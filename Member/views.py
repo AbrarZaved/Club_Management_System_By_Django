@@ -137,8 +137,4 @@ def search_member(request):
         return JsonResponse(data, safe=False)
 
 
-def view_student(request):
-    all_data = Student.objects.all()
-    serializer = StudentSerializer(all_data, many=True)
-    json_data = JSONRenderer().render(serializer.data)
-    return HttpResponse(json_data, content_type="application.json")
+
