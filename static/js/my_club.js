@@ -1,6 +1,26 @@
+document.addEventListener("DOMContentLoaded", function () {
+  var rows = document.getElementById("clubTable").getElementsByTagName("tr");
+  var hasRequests = false;
+
+  // Check if there are any rows with the "requests" class
+  for (var i = 0; i < rows.length; i++) {
+    if (rows[i].classList.contains("requests")) {
+      hasRequests = true;
+      break; // Exit loop early if we find a request
+    }
+  }
+
+  // Call filterTable based on the presence of request rows
+  if (hasRequests) {
+    filterTable("requests");
+  } else {
+    filterTable("members");
+  }
+});
+
 function filterTable(filter) {
   var rows = document.getElementById("clubTable").getElementsByTagName("tr");
-  var update_button = document.getElementById("update");
+  var update_button = document.getElementById("update_button");
   var noReq = document.getElementById("no-req");
   var noMem = document.getElementById("no-mem");
   var header = document.getElementById("header");
@@ -29,26 +49,18 @@ function filterTable(filter) {
     }
   }
 
+  // Header and other elements visibility
   if (filter === "members") {
     header.style.display = anyMembersVisible ? "table-row" : "none";
-    approve.style.display = 'none';
+    approve.style.display = "none";
     noMem.style.display = anyMembersVisible ? "none" : "block";
     noReq.style.display = "none";
-    update_button.style.display = "none";
-    memReq.style.display = "none"; // Assuming memReq is not needed for members
-    
+    update_button.style.display = "none"; // Hide button for members
   } else if (filter === "requests") {
     header.style.display = anyRequestsVisible ? "table-row" : "none";
     noReq.style.display = anyRequestsVisible ? "none" : "block";
     approve.style.display = anyRequestsVisible ? "block" : "none";
     noMem.style.display = "none";
-    update_button.style.display = anyRequestsVisible ? "block" : "none";
-    memReq.style.display = "none"; // Assuming memReq is not needed for requests
-    header.style.display = "none";
+    update_button.style.display = anyRequestsVisible ? "block" : "none"; // Show/hide based on requests
   }
 }
-
-document.addEventListener("DOMContentLoaded", function () {
-  filterTable("members");
-});
-
