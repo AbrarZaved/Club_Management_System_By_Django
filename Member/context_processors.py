@@ -1,5 +1,5 @@
 from Dashboard.models import Club, Notice
-from .models import JoinRequest, MemberJoined, Notification, Status
+from .models import JoinRequest, MemberJoined, Notification
 from django.core.exceptions import ObjectDoesNotExist
 from authentication.models import Student
 
@@ -28,9 +28,7 @@ def Alerts(request):
                         club__club_name=i,user_type="general_user",Student__student=student
                     ).count()
             print(total_notifications)
-            pending_notices = Status.objects.filter(
-                student__club__club_name__in=clubing,student__student=student
-            )
+
             for i in pending_notices:
                 print(i.student.club)
         except ObjectDoesNotExist:
@@ -41,7 +39,7 @@ def Alerts(request):
             total_notifications = Notification.objects.filter(club=club,user_type="admin").count()
             pending_joining_requests = Notification.objects.filter(
                 notification_type="join_request", club=club
-            )
+            ).count()
             pending_event_requests = Notification.objects.filter(
                 notification_type="events", club=club
             ).count()

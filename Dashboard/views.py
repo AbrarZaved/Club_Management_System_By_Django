@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Club, Notice
 from authentication.models import Student
-from Member.models import Notification, MemberJoined, Status
+from Member.models import Notification, MemberJoined
 from django.http import HttpResponse, JsonResponse
 import json
 from django.db.models import Q
@@ -93,7 +93,6 @@ def notice(request):
                 for notice in notices:
                     form_data[notice.title] = notice.description
 
-        updating = Status.objects.filter(student__student=student).update(total=0)
         data = Notification.objects.filter(
             Student__student=student, notification_type="notices"
         )

@@ -1,8 +1,10 @@
 from django.db import models
+from django.forms import ValidationError
 from authentication.models import Student
 from Dashboard.models import Club
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save, pre_delete
 from django.dispatch import receiver
+from django.contrib.auth.models import User
 
 
 class JoinRequest(models.Model):
@@ -19,6 +21,18 @@ class JoinRequest(models.Model):
 
     def get_total_request(self):
         return JoinRequest.objects.filter(status=False, club=self.club).count()
+
+
+    def delete_joined_requests(self, *args, **kwargs):
+        if self.status:  # Only if request is approved
+            # Delete the corresponding notification
+            Notification.objects.filter(
+                notification_type=Notification.JOIN_REQUEST,
+                club=self.club,
+                Student=self.student.user,
+            ).delete()
+            # Then delete the join request
+            self.delete()
 
 
 class MemberJoined(models.Model):
@@ -59,21 +73,38 @@ class Notification(models.Model):
         choices=CATEGORY_CHOICES,
     )
 
-    total = models.IntegerField(default=0)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
-    user_type = models.CharField(max_length=100, choices=USER_TYPES,null=True,default=GENERAL_USER)
-    Student = models.ForeignKey(MemberJoined,on_delete=models.CASCADE,null=True)
-    
+    user_type = models.CharField(
+        max_length=100, choices=USER_TYPES, null=True, default=GENERAL_USER
+    )
+    Student = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
     def __str__(self):
-        return str(self.Student)+" "+self.notification_type
+        return str(self.Student) + " " + self.notification_type
 
     def notifications(self):
         return Notification.objects.filter(club=self.club).count()
 
 
-class Status(models.Model):
-    student = models.ForeignKey(MemberJoined, verbose_name="Students", on_delete=models.CASCADE)
-    total = models.IntegerField(default=0)
+@receiver(post_save, sender=JoinRequest)
+def join_request_alert(sender, instance, *args, **kwargs):
+    if instance.status == False:
+        Notification.objects.create(
+            notification_type="join_request",
+            club=instance.club,
+            user_type="admin",
+            Student=instance.student.user,
+        )
 
-    def __str__(self):
-        return str(self.student)
+
+@receiver(post_save, sender=JoinRequest)
+def delete_notification_on_approval(sender, instance, **kwargs):
+    if instance.status:  # If the join request is approved
+        # Delete the corresponding join request notification
+        Notification.objects.filter(
+            notification_type=Notification.JOIN_REQUEST,
+            club=instance.club,
+            Student=instance.student.user,
+        ).delete()
+        # Optionally, you could automatically delete the JoinRequest after approval
+        instance.delete_joined_requests()

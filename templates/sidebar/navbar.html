@@ -102,9 +102,7 @@
                     {% if total_notifications %}
                       
                       {% if pending_joining_requests %}
-                        {% for notification in pending_joining_requests %}
-                          <a class="dropdown-item" href="{% url 'my_club' %}">You have {{notification.total}} joining requests</a>
-                        {% endfor %}
+                          <a class="dropdown-item" href="{% url 'my_club' %}">You have {{pending_joining_requests}} joining {% if pending_joining_requests == 1 %}request {% else %} requests{% endif %}</a>
                       {% endif %}
 
                       {% if pending_event_requests %}

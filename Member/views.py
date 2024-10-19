@@ -25,13 +25,6 @@ def join_request(request):
         else:
             join_request = JoinRequest(student=student, club=club)
             join_request.save()
-            total_requests = JoinRequest.objects.filter(club=club).count()
-            Notification.objects.update_or_create(
-                notification_type="join_request",
-                club=club,
-                user_type="admin",
-                defaults={"total": total_requests},
-            )
             messages.success(request, "Request Sent")
             return redirect("club")
 
@@ -48,29 +41,12 @@ def my_club(request):
         if id_list:
             for i in id_list:
                 x = int(i)
-                JoinRequest.objects.filter(pk=x).update(status=True)
                 join_request = JoinRequest.objects.get(pk=x)
-                student = join_request.student
-                club = join_request.club
-                MemberJoined.objects.create(student=student, club=club)
-                join_request.delete()
-                total_requests = JoinRequest.objects.filter(club=club_name).count()
-                Notification.objects.update_or_create(
-                    notification_type="join_request",
-                    club=club,
-                    user_type="admin",
-                    defaults={"total": total_requests},
-                )
+                # Update the status and save to trigger post_save signal
+                join_request.status = True
+                join_request.save()  # This will trigger the post_save signal
             messages.info(request, "Members Approved")
             return redirect("my_club")
-
-    total_requests = JoinRequest.objects.filter(club=club_name).count()
-
-    if total_requests == 0:
-        noti = Notification.objects.filter(
-            notification_type="join_request", club=club_name
-        )
-        noti.delete()
 
     members = MemberJoined.objects.filter(club=club_name)
     return render(
@@ -135,6 +111,3 @@ def search_member(request):
 
         data = list(members)
         return JsonResponse(data, safe=False)
-
-
-

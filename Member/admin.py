@@ -1,19 +1,17 @@
 from django.contrib import admin
-from .models import JoinRequest, MemberJoined, Notification, Status
+from .models import JoinRequest, MemberJoined, Notification
+
+
 # Register your models here.
 @admin.register(MemberJoined)
 class MemberJoinedAdmin(admin.ModelAdmin):
-    list_display = ['student','club']
-    list_filter = ['club']
+    list_display = ["student", "club"]
+    list_filter = ["club"]
+
 
 admin.site.register(JoinRequest)
 
 
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ['Student','notification_type', 'club','total']
-
-
-@admin.register(Status)
-class StatusAdmin(admin.ModelAdmin):
-    list_display = ['student','total']
+    list_display = ["Student", "notification_type", "club", "user_type"]
