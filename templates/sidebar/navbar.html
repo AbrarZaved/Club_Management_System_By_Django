@@ -111,8 +111,8 @@
                         {% endfor %}
                       {% endif %}
                       {% if pending_notices %}
-                        {% for notification in pending_notices %}
-                          <a class="dropdown-item" href="{% url 'notice' %}">You have {{notification.total}} new {% if notification.total == 1 %} notice {% else %} notices {% endif %} from {{notification.student.club}}</a>
+                        {% for total, clubs in pending_notices %}
+                          <a class="dropdown-item" href="{% url 'notice' %}">You have {{total}} new {% if total == 1 %} notice {% else %} notices {% endif %} from {{clubs}}</a>
                         {% endfor %}
                       {% endif %}
                     

@@ -40,15 +40,6 @@ def notice(request):
             title = request.POST["title"]
             description = request.POST["description"]
             Notice.objects.create(title=title, description=description, club=club_name)
-            notice_count = Notice.objects.filter(club=club_name, read=False).count()
-            for member in Members:
-                Notification.objects.update_or_create(
-                    notification_type="notices",
-                    club=club_name,
-                    user_type="general_user",
-                    Student=member,
-                    defaults={"total": notice_count},
-                )
             messages.success(request, "Notice Added")
             return redirect("notice")
         else:
@@ -59,8 +50,6 @@ def notice(request):
                     "id", flat=True
                 )
             )
-
-            print(total_id)
             if total_id:
                 for i in total_id:
                     title = Notice.objects.get(id=i, club__club_name=club_name).title
@@ -89,15 +78,13 @@ def notice(request):
         if clubs_with_notices:
             for club_name in clubs_with_notices:
                 notices = Notice.objects.filter(club__club_name=club_name)
-
                 for notice in notices:
                     form_data[notice.title] = notice.description
 
-        data = Notification.objects.filter(
-            Student__student=student, notification_type="notices"
+        notifications_to_delete = Notification.objects.filter(
+            Student__username=user
         )
-        for i in data:
-            i.delete()
+        notifications_to_delete.delete()
 
         return render(request, "dashboard/notice.html", {"form_data": form_data})
 

@@ -1,7 +1,8 @@
 from django.db import models
 from django.forms import ValidationError
+from django.http import request
 from authentication.models import Student
-from Dashboard.models import Club
+from Dashboard.models import Club, Notice
 from django.db.models.signals import post_delete, post_save, pre_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import User
@@ -21,7 +22,6 @@ class JoinRequest(models.Model):
 
     def get_total_request(self):
         return JoinRequest.objects.filter(status=False, club=self.club).count()
-
 
     def delete_joined_requests(self, *args, **kwargs):
         if self.status:  # Only if request is approved
@@ -108,3 +108,20 @@ def delete_notification_on_approval(sender, instance, **kwargs):
         ).delete()
         # Optionally, you could automatically delete the JoinRequest after approval
         instance.delete_joined_requests()
+
+
+@receiver(post_save, sender=Notice)
+def create_event_notification(sender, instance, **kwargs):
+    if instance.read == False:
+        members = [
+            member.student for member in MemberJoined.objects.filter(club=instance.club)
+        ]
+        for i in members:
+            Notification.objects.create(
+                notification_type="notices",
+                club=instance.club,
+                user_type="general_user",
+                Student=i.user,
+            )
+
+

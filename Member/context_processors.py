@@ -19,24 +19,32 @@ def Alerts(request):
             clubing = [i.club.club_name for i in clubs]
             print(clubing)
             for i in clubing:
-                total_data = Notice.objects.filter(club__club_name=i,read=False).count()
+                total_data = Notification.objects.filter(Student__username=user).count()
                 if total_data == 0:
                     clubing.remove(i)
+            pending_notices = []
+
             if clubing:
                 for i in clubing:
-                    total_notifications += Notification.objects.filter(
-                        club__club_name=i,user_type="general_user",Student__student=student
+                    count = Notification.objects.filter(
+                        club__club_name=i,
+                        user_type="general_user",
+                        Student__username=user,
                     ).count()
+                    if count>0:
+                        pending_notices.append((count,i))
+                        total_notifications += count
+
             print(total_notifications)
 
-            for i in pending_notices:
-                print(i.student.club)
         except ObjectDoesNotExist:
             pass
     elif "admin" in user:
         try:
             club = Club.objects.get(tag=admin_name)
-            total_notifications = Notification.objects.filter(club=club,user_type="admin").count()
+            total_notifications = Notification.objects.filter(
+                club=club, user_type="admin"
+            ).count()
             pending_joining_requests = Notification.objects.filter(
                 notification_type="join_request", club=club
             ).count()
