@@ -86,42 +86,41 @@ class Notification(models.Model):
         return Notification.objects.filter(club=self.club).count()
 
 
+# Async signal for join request alert
 @receiver(post_save, sender=JoinRequest)
-def join_request_alert(sender, instance, *args, **kwargs):
+async def join_request_alert(sender, instance, *args, **kwargs):
     if instance.status == False:
-        Notification.objects.create(
-            notification_type="join_request",
+        await Notification.objects.acreate(
+            notification_type=Notification.JOIN_REQUEST,
             club=instance.club,
-            user_type="admin",
+            user_type=Notification.ADMIN,
             Student=instance.student.user,
         )
 
 
+# Async signal to delete notification on approval
 @receiver(post_save, sender=JoinRequest)
-def delete_notification_on_approval(sender, instance, **kwargs):
+async def delete_notification_on_approval(sender, instance, **kwargs):
     if instance.status:  # If the join request is approved
-        # Delete the corresponding join request notification
-        Notification.objects.filter(
+        await Notification.objects.filter(
             notification_type=Notification.JOIN_REQUEST,
             club=instance.club,
             Student=instance.student.user,
-        ).delete()
-        # Optionally, you could automatically delete the JoinRequest after approval
-        instance.delete_joined_requests()
+        ).adelete()
+        await instance.delete_joined_requests()
 
 
+# Async signal to create event notifications
 @receiver(post_save, sender=Notice)
-def create_event_notification(sender, instance, **kwargs):
+async def create_event_notification(sender, instance, **kwargs):
     if instance.read == False:
         members = [
             member.student for member in MemberJoined.objects.filter(club=instance.club)
         ]
         for i in members:
-            Notification.objects.create(
-                notification_type="notices",
+            await Notification.objects.acreate(
+                notification_type=Notification.NOTICES,
                 club=instance.club,
-                user_type="general_user",
+                user_type=Notification.GENERAL_USER,
                 Student=i.user,
             )
-
-
