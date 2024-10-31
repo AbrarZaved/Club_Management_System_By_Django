@@ -1,100 +1,115 @@
-{% extends "sidebar/main.html" %}
-{% block title %}Notices{% endblock %}
+{% extends "sidebar/main.html" %} 
+{% load static %} 
+{% block title %}Notices{% endblock %} 
 {% block content %}
-         <div class="wrapper">
-            <div class="sidebar" data-color="purple" data-background-color="black" data-image="css/assets/img/sidebar-2.jpg">
-               <!--
-                  Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
-                  
-                  Tip 2: you can also add an image using data-image tag
-                  -->
-               <div class="logo"><a href="http://www.creative-tim.com" class="simple-text logo-normal">
-                  DIU_CLUBS
-                  </a>
-               </div>
-               {% include 'sidebar/navbar.html' %}
-               <!-- End Navbar -->
-               <div class="content">
-                  <div class="container-fluid">
-                     {% include "sidebar/message.html" %}
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="card">
-                          <div class="card-header card-header-primary">
-                            <h4 class="card-title ">Notices</h4>
-                            {% if "admin" in user.username %}
-                              <button  type="button" class="btnnnn" data-toggle="modal" data-target="#exampleModal">
-                                 <h4 class="middle">Add Notice</h4>
-                              </button>
-                            {% endif %}
-                          </div>
-                          <div class="container">
-                            <div class="row">
-                     
-                              {% if form_data %}
-                                 {% for title, description in form_data.items %}
-                                 <div class="col-6">
-                                    <div class="card text-white bg-success col-12">
-                                       <h4 class="card-body text-white"><strong>{{ title|title }}</strong></h4><br>
-                                       <p class="card-body text-white">{{ description|linebreaksbr }}</p>
-                                       {% if "admin" in user.username %}
-                                       <a class="col-1" href="{% url 'delete' title %}">
-                                             <button class="btn btn-success btn-sm delete-button">
-                                                <i class="material-icons">delete</i>
-                                             </button>
-                                       </a>
-                                       {% endif %}
-                                    </div>
-                                 </div>
-                                 {% endfor %}
-                              {% endif %}
-                            </div>
-                          </div>
-                        <div class="col-md-12">
-                           <div class="row">
-                              <div class="col-lg-8 col-md-10 ml-auto mr-auto">
-                                 <div class="row">
-                                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                       <div class="modal-dialog" role="document">
-                                          <div class="modal-content">
-                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Add New Notice</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                                </button>
-                                             </div>
-                                             <div class="modal-body">
-                                                <form class="bg-black" action="{% url 'notice' %}" method="POST">
-                                                   {% csrf_token %}
-                                                      <div class="form-group">
-                                                        <input type="text" class="form-control" name="title" placeholder="Notice Title" style="color: black;" required>
-                                                      </div>
-                                                      <div class="form-group">
-                                                        <textarea class="form-control" name="description" placeholder="Description" rows="3" style="color: black;" required></textarea>
-                                                      </div>
-                                                   <div class="modal-footer">
-                                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                      <button type="submit" class="btn btn-primary">Save changes</button>
-                                                   </div>
-                                                </form>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                        <div class="row">
-                           <div class="col-lg-8 col-md-10 ml-auto mr-auto">
-                              <div class="row">
-                                 <!-- Content for second row -->
-                              </div>
-                           </div>
-                        </div>
-                     </div>
+<div class="wrapper">
+  <div class="sidebar" data-color="purple" data-background-color="black" data-image="css/assets/img/sidebar-2.jpg">
+    <div class="logo">
+      <a href="http://www.creative-tim.com" class="simple-text logo-normal">DIU_CLUBS</a>
+    </div>
+    {% include 'sidebar/navbar.html' %}
+    <div class="content">
+      <div class="container-fluid">
+        {% include "sidebar/message.html" %}
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header card-header-primary d-flex justify-content-between align-items-center">
+                <h3 class="card-title">Notices</h3>
+                <div>
+                  {% if clubs_with_notices|length > 1 %}
+                  <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      All Notices
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="filterValues">
+                      <a class="dropdown-item" href="#" data-value="All">All ({{all_notices}})</a>
+                      
+                      {% for club, total in clubs_with_notices %}
+                      
+                      <a class="dropdown-item" href="#" data-value="{{ club }}">{{ club }} ({{total}})</a>
+                      {% endfor %}
+                    </div>
                   </div>
-               </div>
+                  {% endif %}
+                  {% if "admin" in user.username %}
+                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal">
+                      Add Notice
+                    </button>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="container">
+                  <div id="all_notices">
+                    <div class="row">
+                      <div class="col-12">
+                        <div class="mb-3 text-right"> <!-- Adjusted margin and alignment -->
+
+                        </div>
+                      </div>
+                      {% if form_data %}
+                      {% for title, description in form_data.items %}
+                      <div class="col-6">
+                        <div class="card text-white bg-success col-12">
+                          <h4 class="card-body text-white"><strong>{{ title|title }}</strong></h4>
+                          <br />
+                          <p class="card-body text-white">{{ description|linebreaksbr }}</p>
+                          {% if "admin" in user.username %}
+                          <a class="col-1" href="{% url 'delete' title %}">
+                            <button class="btn btn-success btn-sm delete-button">
+                              <i class="material-icons">delete</i>
+                            </button>
+                          </a>
+                          {% endif %}
+                        </div>
+                      </div>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="row" id="result_notices">
+                    <!-- Content will be dynamically inserted here -->
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-8 col-md-10 ml-auto mr-auto">
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Add New Notice</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <form class="bg-black" action="{% url 'notice' %}" method="POST">
+                              {% csrf_token %}
+                              <div class="form-group">
+                                <input type="text" class="form-control" name="title" placeholder="Notice Title" style="color: black" required />
+                              </div>
+                              <div class="form-group">
+                                <textarea class="form-control" name="description" placeholder="Description" rows="3" style="color: black" required></textarea>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-         </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/filterNotice.js' %}"></script>
 {% endblock %}

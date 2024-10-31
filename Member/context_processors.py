@@ -6,57 +6,61 @@ from authentication.models import Student
 
 def Alerts(request):
     user = str(request.user)
-    admin_name = user[6:]
+    is_admin = "admin" in user
     total_notifications = 0
     pending_joining_requests = 0
     pending_event_requests = 0
-    pending_notices = 0
+    pending_notices = []
+    all_notices = 0
 
-    if request.user.is_authenticated and "admin" not in user:
-        try:
-            student = Student.objects.get(user=request.user)
-            clubs = list(MemberJoined.objects.filter(student=student))
-            clubing = [i.club.club_name for i in clubs]
-            print(clubing)
-            for i in clubing:
-                total_data = Notification.objects.filter(Student__username=user).count()
-                if total_data == 0:
-                    clubing.remove(i)
-            pending_notices = []
+    if request.user.is_authenticated:
+        if not is_admin:
+            try:
+                student = Student.objects.get(user=request.user)
+                clubs = MemberJoined.objects.filter(student=student).values_list(
+                    "club__club_name", flat=True
+                )
 
-            if clubing:
-                for i in clubing:
+                # Count all notices related to joined clubs
+                all_notices = Notice.objects.filter(club__club_name__in=clubs).count()
+
+                for club_name in clubs:
                     count = Notification.objects.filter(
-                        club__club_name=i,
+                        club__club_name=club_name,
                         user_type="general_user",
                         Student__username=user,
                     ).count()
-                    if count>0:
-                        pending_notices.append((count,i))
+
+                    if count > 0:
+                        pending_notices.append((count, club_name))
                         total_notifications += count
 
-            print(total_notifications)
+            except ObjectDoesNotExist:
+                pass
+        else:
+            admin_name = user[6:]
+            try:
+                club = Club.objects.get(tag=admin_name)
 
-        except ObjectDoesNotExist:
-            pass
-    elif "admin" in user:
-        try:
-            club = Club.objects.get(tag=admin_name)
-            total_notifications = Notification.objects.filter(
-                club=club, user_type="admin"
-            ).count()
-            pending_joining_requests = Notification.objects.filter(
-                notification_type="join_request", club=club
-            ).count()
-            pending_event_requests = Notification.objects.filter(
-                notification_type="events", club=club
-            ).count()
-        except ObjectDoesNotExist:
-            pass
+                total_notifications = Notification.objects.filter(
+                    club=club, user_type="admin"
+                ).count()
+
+                pending_joining_requests = Notification.objects.filter(
+                    notification_type="join_request", club=club
+                ).count()
+
+                pending_event_requests = Notification.objects.filter(
+                    notification_type="events", club=club
+                ).count()
+
+            except ObjectDoesNotExist:
+                pass
 
     return {
         "total_notifications": total_notifications,
         "pending_joining_requests": pending_joining_requests,
         "pending_event_requests": pending_event_requests,
         "pending_notices": pending_notices,
+        "all_notices": all_notices,
     }
