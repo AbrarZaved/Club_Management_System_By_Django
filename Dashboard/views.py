@@ -46,21 +46,46 @@ def notice(request):
             return redirect("notice")
 
         else:
-            # Fetch all notices for the club in a single query
-            notices = Notice.objects.filter(club=club).values("title", "description")
-            form_data = {notice["title"]: notice["description"] for notice in notices}
+            # Fetch all notices for the club in a single query, including IDs
+            notices = Notice.objects.filter(club=club).values(
+                "id", "title", "description", "club__club_name"
+            )
+            form_data = {
+                notice["title"]: {
+                    "id": notice["id"],
+                    "description": notice["description"],
+                    "club": notice["club__club_name"],
+                }
+                for notice in notices
+            }
+            print(form_data)
 
             return render(request, "dashboard/notice.html", {"form_data": form_data})
 
     else:
         form_data = {}
-        clubs = MemberJoined.objects.filter(student=student).values_list("club__club_name", flat=True)
+        clubs = MemberJoined.objects.filter(student=student).values_list(
+            "club__club_name", flat=True
+        )
 
         # Fetch notices only for clubs with existing notices and store in form_data
-        clubs_with_notices = Notice.objects.filter(club__club_name__in=clubs).select_related("club")
-        
-        for notice in clubs_with_notices:
-            form_data[notice.title] = notice.description
+        clubs_with_notices = (
+            Notice.objects.filter(club__club_name__in=clubs)
+            .select_related("club")
+            .values("title", "description", "club__club_name", "created_at")
+        )
+
+        form_data = {
+            notice["title"]: {
+                "description": notice["description"],
+                "club": notice["club__club_name"],
+                "time": notice["created_at"],
+            }
+            for notice in clubs_with_notices
+        }
+        form_data = dict(
+            sorted(form_data.items(), key=lambda item: item[1]["time"], reverse=True)
+        )
 
         # Delete all notifications for the student
         Notification.objects.filter(Student__username=user).delete()
@@ -79,11 +104,9 @@ def notice(request):
         )
 
 
-
-def delete_notice(request, title):
+def delete_notice(request, boom):
     admin_name = request.user.username[6:]
-    club_name = Club.objects.get(tag=admin_name)
-    form = Notice.objects.get(title=title, club=club_name)
+    form = Notice.objects.get(id=boom)
     form.delete()
     return redirect("notice")
 
@@ -104,10 +127,11 @@ def filter_notices(request):
         meta_data = Notice.objects.filter(club__club_name=club_name)
         data = [
             {
-                'id': notice.id,
-                'title': notice.title,
-                'description': notice.description,
-                'club_name': notice.club.club_name,
+                "id": notice.id,
+                "title": notice.title,
+                "description": notice.description,
+                "club_name": notice.club.club_name,
+                "created_at":notice.created_at,
             }
             for notice in meta_data
         ]

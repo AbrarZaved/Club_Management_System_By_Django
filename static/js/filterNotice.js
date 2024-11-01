@@ -34,6 +34,7 @@ function filterNotices(selectedClub) {
   })
     .then((res) => res.json())
     .then((data) => {
+      console.log(data);
       resNotice.innerHTML = "";
       resNotice.style.display = "block";
       all_notices.style.display = "none";
@@ -41,14 +42,36 @@ function filterNotices(selectedClub) {
         let rowContainer = '<div class="row">';
 
         data.forEach((element) => {
+          const createdAt = element.created_at;
+          const date = new Date(createdAt);
+
+          const options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          };
+
+          // Format the date to a readable string
+          const formattedDate = date.toLocaleString("en-US", options);
+
+          // Update the rowContainer with formatted date
           rowContainer += `
-            <div class="col-6">
-              <div class="card text-white bg-success col-12">
+        <div class="col-6">
+            <div class="card text-white bg-success col-12">
                 <h4 class="card-body text-white"><strong>${element.title}</strong></h4>
                 <p class="card-body text-white">${element.description}</p>
-              </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="badge bg-light text-success">${element.club_name}</span>
+                  <span class="badge bg-light text-success">${formattedDate}</span>
+                </div>
+
             </div>
-          `;
+
+        </div>
+    `;
         });
 
         rowContainer += "</div>";

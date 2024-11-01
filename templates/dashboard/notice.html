@@ -5,7 +5,7 @@
 <div class="wrapper">
   <div class="sidebar" data-color="purple" data-background-color="black" data-image="css/assets/img/sidebar-2.jpg">
     <div class="logo">
-      <a href="http://www.creative-tim.com" class="simple-text logo-normal">DIU_CLUBS</a>
+      <a href="{% url 'dashboard' %}" class="simple-text logo-normal">DIU_CLUBS</a>
     </div>
     {% include 'sidebar/navbar.html' %}
     <div class="content">
@@ -49,23 +49,31 @@
                         </div>
                       </div>
                       {% if form_data %}
-                      {% for title, description in form_data.items %}
-                      <div class="col-6">
-                        <div class="card text-white bg-success col-12">
-                          <h4 class="card-body text-white"><strong>{{ title|title }}</strong></h4>
-                          <br />
-                          <p class="card-body text-white">{{ description|linebreaksbr }}</p>
-                          {% if "admin" in user.username %}
-                          <a class="col-1" href="{% url 'delete' title %}">
-                            <button class="btn btn-success btn-sm delete-button">
-                              <i class="material-icons">delete</i>
-                            </button>
-                          </a>
-                          {% endif %}
-                        </div>
-                      </div>
-                      {% endfor %}
+                        {% for title, data in form_data.items %}
+                          <div class="col-6">
+                            <div class="card text-white bg-success col-12">
+                              <h4 class="card-body text-white"><strong>{{ title|title }}</strong></h4>
+                              
+                              <p class="card-body text-white">{{ data.description|linebreaksbr }}</p>
+                              
+                              <div class="d-flex justify-content-between align-items-center">
+                                
+                                {% if "admin" in user.username %}
+                                  <a href="{% url 'delete' data.id %}">
+                                    <button class="btn btn-success btn-sm delete-button">
+                                      <i class="material-icons">delete</i>
+                                    </button>
+                                  </a>
+                                {% else %}
+                                  <span class="badge bg-light text-success">{{ data.club }}</span>
+                                  <span class="badge bg-light text-success">{{ data.time }}</span>
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                        {% endfor %}
                       {% endif %}
+
                     </div>
                   </div>
                   <div class="row" id="result_notices">
