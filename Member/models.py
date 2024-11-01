@@ -1,6 +1,7 @@
 from django.db import models
 from django.forms import ValidationError
 from django.http import request
+from test.testcodec import k
 from authentication.models import Student
 from Dashboard.models import Club, Notice
 from django.db.models.signals import post_delete, post_save, pre_delete
@@ -78,6 +79,7 @@ class Notification(models.Model):
         max_length=100, choices=USER_TYPES, null=True, default=GENERAL_USER
     )
     Student = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    notice = models.ForeignKey(Notice, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return str(self.Student) + " " + self.notification_type
@@ -122,6 +124,12 @@ def create_event_notification(sender, instance, **kwargs):
                 club=instance.club,
                 user_type="general_user",
                 Student=i.user,
+                notice=instance,
             )
 
 
+@receiver(post_delete, sender=Notice)
+def delete_notice_notification(sender, instance, **kwargs):
+    Notification.objects.filter(
+        club=instance.club, notification_type=Notification.NOTICES, notice=instance
+    ).delete()

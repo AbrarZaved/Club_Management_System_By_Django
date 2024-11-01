@@ -18,7 +18,7 @@ class Club(models.Model):
 class Notice(models.Model):
     title = models.CharField(max_length=50)
     club = models.ForeignKey(Club, on_delete=models.CASCADE, null=True)
-    description = models.CharField(max_length=500)
+    description = models.CharField(max_length=2000)
     read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

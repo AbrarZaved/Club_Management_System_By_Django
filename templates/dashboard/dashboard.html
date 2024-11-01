@@ -1,22 +1,15 @@
 {% extends "sidebar/main.html" %}
+{% load static %}
+{% load custom_filter %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
   <div class="wrapper">
     <div class="sidebar" data-color="purple" data-background-color="black" data-image="css/assets/img/sidebar-2.jpg">
-      <!--
-        Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
-
-        Tip 2: you can also add an image using data-image tag
-    -->
-      <div class="logo"><a href="{% url 'dashboard' %}" class="simple-text logo-normal">
-          DIU_CLUBS
-        </a></div>
-        {% include 'sidebar/navbar.html' %}
-      <!-- End Navbar -->
+      <div class="logo"><a href="{% url 'dashboard' %}" class="simple-text logo-normal">DIU_CLUBS</a></div>
+      {% include 'sidebar/navbar.html' %}
       <div class="content">
-
         <div class="container-fluid">
-        {% include "sidebar/message.html" %}
+          {% include "sidebar/message.html" %}
           <div class="row">
             <div class="col-xl-4 col-lg-12">
               <div class="card card-chart">
@@ -26,7 +19,8 @@
                 <div class="card-body">
                   <h4 class="card-title">Daily Events</h4>
                   <p class="card-category">
-                    <span class="text-success"><i class="fa fa-long-arrow-up"></i> 55% </span> increase in today sales.</p>
+                    <span class="text-success"><i class="fa fa-long-arrow-up"></i> 55% </span> increase in today sales.
+                  </p>
                 </div>
                 <div class="card-footer">
                   <div class="stats">
@@ -35,22 +29,46 @@
                 </div>
               </div>
             </div>
+
             <div class="col-xl-4 col-lg-12">
               <div class="card card-chart">
                 <div class="card-header card-header-warning">
                   <div class="ct-chart" id="websiteViewsChart"></div>
+                  <div id="noticesCarousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner"><br><br><br><br><br><br>
+                      {% for title, notice in recent_notices.items %}
+                          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                              <br><br>
+                              <div class="carousel-caption d-none d-md-block">
+                                  <h3>{{ title|slice_from_last_underscore:15 }}</h3>  <!-- Use title directly -->
+                                  <span>{{ notice.club }}<br><br></span>  <!-- Access the club name from the notice dictionary -->
+                                  <a href="{% url 'notice' %}">Read more</a>
+                              </div>
+                          </div>
+                      {% endfor %}
+                    </div>
+
+                    <!-- Carousel controls -->
+                    <a class="carousel-control-prev" href="#noticesCarousel" role="button" data-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#noticesCarousel" role="button" data-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="sr-only">Next</span>
+                    </a>
+                  </div>
                 </div>
                 <div class="card-body">
-                  <h4 class="card-title">Activity</h4>
-                  <p class="card-category">Last Campaign Performance</p>
+                  <h4 class="card-title">Notices</h4>
+                  <p class="card-category">Glimpse of your recent notices</p>
                 </div>
                 <div class="card-footer">
-                  <div class="stats">
-                    <i class="material-icons">access_time</i> campaign sent 2 days ago
-                  </div>
+
                 </div>
               </div>
             </div>
+
             <div class="col-xl-4 col-lg-12">
               <div class="card card-chart">
                 <div class="card-header card-header-danger">
@@ -68,6 +86,8 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}
