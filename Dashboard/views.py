@@ -27,20 +27,20 @@ def dashboard(request):
         Notice.objects.filter(club__club_name__in=clubs)
         .order_by("-created_at")  # Order by latest first
         .select_related("club")
-        .values("title","club__club_name", "created_at")[
-            :3
-        ]  # Get the latest 3
+        .values("title", "club__club_name", "created_at")[:3]  # Get the latest 3
     )
-    recent_notices= {}
+    recent_notices = {}
     # Format data for rendering
     for notice in clubs_with_notices:
-        unique_key = f"{notice['title']}_{notice['created_at'].strftime('%Y%m%d%H%M%S')}"
+        unique_key = f"{notice['title']}_{notice['created_at'].strftime('%B %d, %Y at %I:%M %p')}"
         recent_notices[unique_key] = {
             "club": notice["club__club_name"],
-            "time": notice["created_at"].strftime("%Y-%m-%d %H:%M:%S"),
+            "time": notice["created_at"].strftime("%B %d, %Y at %I:%M %p"),
         }
 
-    return render(request, "dashboard/dashboard.html", {"recent_notices": recent_notices})
+    return render(
+        request, "dashboard/dashboard.html", {"recent_notices": recent_notices}
+    )
 
 
 def add_event(request):
@@ -70,16 +70,15 @@ def notice(request):
 
         # Fetch notices for the admin's club
         notices = Notice.objects.filter(club=club).values(
-            "id", "title", "description", "club__club_name"
+            "id", "title", "description", "club__club_name", "created_at", "id"
         )
         for notice in notices:
-            unique_key = (
-                f"{notice['title']}_{notice['created_at'].strftime('%Y%m%d%H%M%S')}"
-            )
+            unique_key = f"{notice['title']}_{notice['created_at'].strftime('%B %d, %Y at %I:%M %p')}"
             form_data[unique_key] = {
                 "description": notice["description"],
                 "club": notice["club__club_name"],
-                "time": notice["created_at"].strftime("%Y-%m-%d %H:%M:%S"),
+                "time": notice["created_at"].strftime("%B %d, %Y at %I:%M %p"),
+                "id": notice["id"],
             }
 
     else:
@@ -94,11 +93,13 @@ def notice(request):
         )
         print(len(clubs_with_notices))
         for notice in clubs_with_notices:
-            unique_key = f"{notice['title']}_{notice['created_at'].strftime('%Y%m%d%H%M%S')}"
+            unique_key = f"{notice['title']}_{notice['created_at'].strftime('%B %d, %Y at %I:%M %p')}"
             form_data[unique_key] = {
                 "description": notice["description"],
                 "club": notice["club__club_name"],
-                "time": notice["created_at"].strftime("%Y-%m-%d %H:%M:%S"),
+                "time": notice["created_at"].strftime(
+                    "%B %d, %Y at %I:%M %p"
+                ),  # Updated to desired format
             }
 
         # Sort by creation time in descending order
@@ -129,7 +130,6 @@ def notice(request):
 
 
 def delete_notice(request, boom):
-    admin_name = request.user.username[6:]
     form = Notice.objects.get(id=boom)
     form.delete()
     return redirect("notice")

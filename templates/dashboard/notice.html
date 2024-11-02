@@ -25,9 +25,7 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="filterValues">
                       <a class="dropdown-item" href="#" data-value="All">All ({{all_notices}})</a>
-                      
                       {% for club, total in clubs_with_notices %}
-                      
                       <a class="dropdown-item" href="#" data-value="{{ club }}">{{ club }} ({{total}})</a>
                       {% endfor %}
                     </div>
@@ -45,20 +43,15 @@
                   <div id="all_notices">
                     <div class="row">
                       <div class="col-12">
-                        <div class="mb-3 text-right"> <!-- Adjusted margin and alignment -->
-
-                        </div>
+                        <div class="mb-3 text-right"></div>
                       </div>
                       {% if form_data %}
                         {% for title, data in form_data.items %}
                           <div class="col-6">
                             <div class="card text-white bg-success col-12">
                               <h4 class="card-body text-white"><strong>{{ title|slice_from_last_underscore:15 }}</strong></h4>
-                              
-                              <p class="card-body text-white">{{ data.description|linebreaksbr }}</p>
-                              
+                              <p class="card-body text-white">{{ data.description|truncatewords:10 }}</p>
                               <div class="d-flex justify-content-between align-items-center">
-                                
                                 {% if "admin" in user.username %}
                                   <a href="{% url 'delete' data.id %}">
                                     <button class="btn btn-success btn-sm delete-button">
@@ -66,21 +59,47 @@
                                     </button>
                                   </a>
                                 {% else %}
-                                  <span class="badge bg-light text-success">{{ data.club }}</span>
-                                  <span class="badge bg-light text-success">{{ data.time }}</span>
+                                  <span class="badge bg-light text-success">{{ data.club }} | {{ data.time }}</span>
+                                  <button class="btn btn-success btn-sm preview-button" data-toggle="modal" data-target="#previewModal" data-title="{{ title }}" data-description="{{ data.description }}" data-club="{{ data.club }}" data-time="{{ data.time }}">
+                                    <i class="material-icons">preview</i>
+                                  </button>
                                 {% endif %}
                               </div>
                             </div>
                           </div>
                         {% endfor %}
                       {% endif %}
-
                     </div>
                   </div>
-                  <div class="row" id="result_notices">
-                    <!-- Content will be dynamically inserted here -->
+                  <div class="row" id="result_notices"></div>
+                </div>
+
+                <!-- Preview Modal -->
+                <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content" style="background-color: black; color: white;">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="previewModalLabel">Notice Preview</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <h4 id="preview-title" class="font-weight-bold text-white"></h4>
+                        <p id="preview-description" class="text-white"></p>
+                        <p class="text-muted">
+                          <span id="preview-club" class="text-white"></span> | <span id="preview-time" class="text-white"></span>
+                        </p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+
+                <!-- Add Notice Modal -->
                 <div class="row">
                   <div class="col-lg-8 col-md-10 ml-auto mr-auto">
                     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -112,6 +131,7 @@
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -120,5 +140,9 @@
     </div>
   </div>
 </div>
+
 <script src="{% static 'js/filterNotice.js' %}"></script>
+
+
+
 {% endblock %}
