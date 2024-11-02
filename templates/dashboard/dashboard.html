@@ -36,13 +36,14 @@
                   <div class="ct-chart" id="websiteViewsChart"></div>
                   <div id="noticesCarousel" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner"><br><br><br><br><br><br>
+                      
                       {% for title, notice in recent_notices.items %}
                           <div class="carousel-item {% if forloop.first %}active{% endif %}">
                               <br><br>
                               <div class="carousel-caption d-none d-md-block">
                                   <h3>{{ title|slice_from_last_underscore:15 }}</h3>  <!-- Use title directly -->
                                   <span>{{ notice.club }}<br><br></span>  <!-- Access the club name from the notice dictionary -->
-                                  <a href="{% url 'notice' %}">Read more</a>
+                                  <a href="{% url 'notice' notice.id %}">Read more</a>
                               </div>
                           </div>
                       {% endfor %}

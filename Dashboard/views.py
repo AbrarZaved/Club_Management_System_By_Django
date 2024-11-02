@@ -27,7 +27,7 @@ def dashboard(request):
         Notice.objects.filter(club__club_name__in=clubs)
         .order_by("-created_at")  # Order by latest first
         .select_related("club")
-        .values("title", "club__club_name", "created_at")[:3]  # Get the latest 3
+        .values("title", "club__club_name", "created_at","id")[:3]  # Get the latest 3
     )
     recent_notices = {}
     # Format data for rendering
@@ -36,6 +36,7 @@ def dashboard(request):
         recent_notices[unique_key] = {
             "club": notice["club__club_name"],
             "time": notice["created_at"].strftime("%B %d, %Y at %I:%M %p"),
+            "id": notice["id"],
         }
 
     return render(
@@ -53,7 +54,7 @@ def club_list(request):
 
 
 @login_required
-def notice(request):
+def notice(request,pk=None):
     user = request.user
     student = Student.objects.get(user=user)
     form_data = {}
@@ -89,7 +90,7 @@ def notice(request):
         clubs_with_notices = (
             Notice.objects.filter(club__club_name__in=clubs)
             .select_related("club")
-            .values("title", "description", "club__club_name", "created_at")
+            .values("title", "description", "club__club_name", "created_at","id")
         )
         print(len(clubs_with_notices))
         for notice in clubs_with_notices:
@@ -100,6 +101,7 @@ def notice(request):
                 "time": notice["created_at"].strftime(
                     "%B %d, %Y at %I:%M %p"
                 ),  # Updated to desired format
+                "id": notice["id"],
             }
 
         # Sort by creation time in descending order

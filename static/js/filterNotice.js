@@ -128,3 +128,23 @@ previewButtons.forEach((button) => {
     document.getElementById("preview-time").innerText = time;
   });
 });
+
+// Glowing a Notice
+document.addEventListener("DOMContentLoaded", function () {
+  const urlParams = window.location.pathname;
+  const noticeId = urlParams.slice(8); // Replace 'id' with your parameter name
+  console.log(noticeId);
+  if (noticeId) {
+    const targetNotice = document.getElementById(`notice-${noticeId}`);
+    if (targetNotice) {
+      // Apply glow effect
+      targetNotice.style.transition = "box-shadow .5s ease-in-out";
+      targetNotice.style.boxShadow = "0 0 20px gray";
+
+      // Remove glow effect after .25 second
+      setTimeout(() => {
+        targetNotice.style.boxShadow = "none";
+      }, 250);
+    }
+  }
+});

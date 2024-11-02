@@ -47,7 +47,7 @@
                       </div>
                       {% if form_data %}
                         {% for title, data in form_data.items %}
-                          <div class="col-6">
+                          <div class="col-6" id="notice-{{data.id}}">
                             <div class="card text-white bg-success col-12">
                               <h4 class="card-body text-white"><strong>{{ title|slice_from_last_underscore:15 }}</strong></h4>
                               <p class="card-body text-white">{{ data.description|truncatewords:10 }}</p>
