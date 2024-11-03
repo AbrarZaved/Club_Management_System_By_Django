@@ -27,7 +27,7 @@ def dashboard(request):
         Notice.objects.filter(club__club_name__in=clubs)
         .order_by("-created_at")  # Order by latest first
         .select_related("club")
-        .values("title", "club__club_name", "created_at","id")[:3]  # Get the latest 3
+        .values("title", "club__club_name", "created_at", "id")[:3]  # Get the latest 3
     )
     recent_notices = {}
     # Format data for rendering
@@ -54,7 +54,7 @@ def club_list(request):
 
 
 @login_required
-def notice(request,pk=None):
+def notice(request, pk=None):
     user = request.user
     student = Student.objects.get(user=user)
     form_data = {}
@@ -90,26 +90,9 @@ def notice(request,pk=None):
         clubs_with_notices = (
             Notice.objects.filter(club__club_name__in=clubs)
             .select_related("club")
-            .values("title", "description", "club__club_name", "created_at","id")
+            .values("title", "description", "club__club_name", "created_at", "id")
         )
-        print(len(clubs_with_notices))
-        for notice in clubs_with_notices:
-            unique_key = f"{notice['title']}_{notice['created_at'].strftime('%B %d, %Y at %I:%M %p')}"
-            form_data[unique_key] = {
-                "description": notice["description"],
-                "club": notice["club__club_name"],
-                "time": notice["created_at"].strftime(
-                    "%B %d, %Y at %I:%M %p"
-                ),  # Updated to desired format
-                "id": notice["id"],
-            }
 
-        # Sort by creation time in descending order
-        print(len(form_data))
-        form_data = dict(
-            sorted(form_data.items(), key=lambda item: item[1]["time"], reverse=True)
-        )
-        print(len(form_data))
         # Clear notifications for this user
         Notification.objects.filter(Student__username=str(user)).delete()
 
@@ -150,15 +133,47 @@ def search_clubs(request):
 def filter_notices(request):
     if request.method == "POST":
         club_name = json.loads(request.body).get("text")
-        meta_data = Notice.objects.filter(club__club_name=club_name)
-        data = [
-            {
-                "id": notice.id,
-                "title": notice.title,
-                "description": notice.description,
-                "club_name": notice.club.club_name,
-                "created_at": notice.created_at,
-            }
-            for notice in meta_data
-        ]
-        return JsonResponse(data, safe=False)
+        print(club_name)
+        if club_name == "All":
+            user = request.user
+            student = Student.objects.get(user=user)
+            clubs = MemberJoined.objects.filter(student=student).values_list(
+                "club__club_name", flat=True
+            )
+            print(clubs)
+            meta_data = []
+            for i in clubs:
+                notices = Notice.objects.filter(club__club_name=i).values_list(
+                    "id", "title", "description", "club__club_name", "created_at"
+                )
+                meta_data.extend(
+                    notices
+                )  # Flattening the queryset by appending each notice
+
+            print(meta_data)
+            data = [
+                {
+                    "id": notice[0],
+                    "title": notice[1],
+                    "description": notice[2],
+                    "club_name": notice[3],
+                    "created_at": notice[4],
+                }
+                for notice in meta_data
+            ]
+            data = sorted(data, key=lambda x: x["created_at"], reverse=True)
+            return JsonResponse(list(data), safe=False)
+
+        else:
+            meta_data = Notice.objects.filter(club__club_name=club_name)
+            data = [
+                {
+                    "id": notice.id,
+                    "title": notice.title,
+                    "description": notice.description,
+                    "club_name": notice.club.club_name,
+                    "created_at": notice.created_at,
+                }
+                for notice in meta_data
+            ]
+            return JsonResponse(data, safe=False)

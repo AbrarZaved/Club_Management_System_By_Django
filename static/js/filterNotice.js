@@ -1,5 +1,14 @@
 var resNotice = document.getElementById("result_notices");
 resNotice.style.display = "none";
+const urlParams = window.location.pathname;
+const noticeId = urlParams.slice(8); // Adjust according to your URL structure
+console.log(noticeId);
+if (noticeId) {
+  // Call Glow after DOM content has loaded
+  document.addEventListener("DOMContentLoaded", () => {
+    filterNotices("All"); // Initialize with default filter
+  });
+}
 
 const previewButtons = document.querySelectorAll(".preview-button");
 document.querySelectorAll("#filterValues .dropdown-item").forEach((item) => {
@@ -15,16 +24,7 @@ document.querySelectorAll("#filterValues .dropdown-item").forEach((item) => {
 
 // Function to filter notices based on the selected club
 function filterNotices(selectedClub) {
-  var all_notices = document.getElementById("all_notices");
   var previewModal = document.getElementById("previewModal");
-
-  // Listen for the modal's 'hidden' event
-
-  if (selectedClub === "All") {
-    all_notices.style.display = "block";
-    resNotice.style.display = "none";
-    return;
-  }
 
   fetch("/filter_notices", {
     method: "POST",
@@ -38,7 +38,7 @@ function filterNotices(selectedClub) {
       console.log(data);
       resNotice.innerHTML = "";
       resNotice.style.display = "block";
-      all_notices.style.display = "none";
+
       if (data.length > 0) {
         let rowContainer = '<div class="row">';
 
@@ -55,18 +55,27 @@ function filterNotices(selectedClub) {
             hour12: true,
           };
 
-          // Format the date to a readable string
           const formattedDate = date.toLocaleString("en-US", options);
 
-          // Update the rowContainer with formatted date
           rowContainer += `
-            <div class="col-6">
+            <div class="col-6" id="notice-${element.id}">
               <div class="card text-white bg-success col-12">
-                <h4 class="card-body text-white"><strong>${element.title}</strong></h4>
-                <p class="card-body text-white">${element.description}</p>
+                <h4 class="card-body text-white"><strong>${
+                  element.title
+                }</strong></h4>
+                <p class="card-body text-white">${element.description
+                  .split(" ")
+                  .slice(0, 10)
+                  .join(" ")}...</p>
                 <div class="d-flex justify-content-between align-items-center">
-                  <span class="badge bg-light text-success">${element.club_name} | ${formattedDate}</span>
-                  <button class="btn btn-success btn-sm preview-button" data-toggle="modal" data-target="#previewModal" data-title="${element.title}" data-description="${element.description}" data-club="${element.club_name}" data-time="${formattedDate}">
+                  <span class="badge bg-light text-success">${
+                    element.club_name
+                  } | ${formattedDate}</span>
+                  <button class="btn btn-success btn-sm preview-button" data-toggle="modal" data-target="#previewModal" data-title="${
+                    element.title
+                  }" data-description="${element.description}" data-club="${
+            element.club_name
+          }" data-time="${formattedDate}">
                     <i class="material-icons">preview</i>
                   </button>
                 </div>
@@ -77,6 +86,11 @@ function filterNotices(selectedClub) {
 
         rowContainer += "</div>";
         resNotice.innerHTML = rowContainer;
+
+        // Call Glow function for the specific notice
+        if (noticeId) {
+          Glow(noticeId); // Pass the noticeId to the Glow function
+        }
 
         // Add event listeners to preview buttons
         const newPreviewButtons = resNotice.querySelectorAll(".preview-button");
@@ -112,39 +126,28 @@ function sliceFromLastUnderscore(title) {
   return lastUnderscoreIndex > -1 ? title.slice(0, lastUnderscoreIndex) : title;
 }
 
-// Reset preview elements on page load
-previewButtons.forEach((button) => {
-  button.addEventListener("click", function () {
-    const title = button.getAttribute("data-title");
-    const description = button.getAttribute("data-description");
-    const club = button.getAttribute("data-club");
-    const time = button.getAttribute("data-time");
+// Glowing a Notice
+function Glow(noticeId) {
+  const targetNotice = document.getElementById(`notice-${noticeId}`);
+  if (targetNotice) {
+    // Apply glow effect
+    targetNotice.style.transition = "box-shadow .5s ease-in-out";
+    targetNotice.style.boxShadow = "0 0 20px gray";
 
-    // Update the modal with sliced title
-    document.getElementById("preview-title").innerText =
-      sliceFromLastUnderscore(title);
-    document.getElementById("preview-description").innerText = description;
-    document.getElementById("preview-club").innerText = club;
-    document.getElementById("preview-time").innerText = time;
-  });
+    // Remove glow effect after .25 second
+    setTimeout(() => {
+      targetNotice.style.boxShadow = "none";
+    }, 500);
+  }
+}
+
+// Search Notice
+var searchBar = document.getElementById("searchBar");
+searchBar.addEventListener("keyup", (e) => {
+  console.log(e.target.value);
 });
 
-// Glowing a Notice
-document.addEventListener("DOMContentLoaded", function () {
-  const urlParams = window.location.pathname;
-  const noticeId = urlParams.slice(8); // Replace 'id' with your parameter name
-  console.log(noticeId);
-  if (noticeId) {
-    const targetNotice = document.getElementById(`notice-${noticeId}`);
-    if (targetNotice) {
-      // Apply glow effect
-      targetNotice.style.transition = "box-shadow .5s ease-in-out";
-      targetNotice.style.boxShadow = "0 0 20px gray";
-
-      // Remove glow effect after .25 second
-      setTimeout(() => {
-        targetNotice.style.boxShadow = "none";
-      }, 250);
-    }
-  }
+// Call filterNotices on page load for "All" category
+document.addEventListener("DOMContentLoaded", () => {
+  filterNotices("All");
 });
