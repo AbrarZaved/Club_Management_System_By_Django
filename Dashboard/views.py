@@ -133,14 +133,35 @@ def search_clubs(request):
 def filter_notices(request):
     if request.method == "POST":
         club_name = json.loads(request.body).get("text")
-        print(club_name)
+        search_value = json.loads(request.body).get("search_value")
+        user = request.user
+        student = Student.objects.get(user=user)
+        clubs = MemberJoined.objects.filter(student=student).values_list(
+            "club__club_name", flat=True
+        )
+        if search_value:
+            
+            meta_data = Notice.objects.filter(
+                Q(club__club_name__icontains=search_value)
+                | Q(title__icontains=search_value)
+                | Q(description__icontains=search_value)
+                | Q(club__tag__icontains=search_value)
+            ).values_list("id", "title", "description", "club__club_name", "club__tag", "created_at")
+            data = [
+                {
+                    "id": notice[0],
+                    "title": notice[1],
+                    "description": notice[2],
+                    "club_name": notice[3],
+                    "created_at": notice[5],
+                    "tag":notice[4]
+                }
+                for notice in meta_data
+            ]
+            return JsonResponse(list(data), safe=False)
+
         if club_name == "All":
-            user = request.user
-            student = Student.objects.get(user=user)
-            clubs = MemberJoined.objects.filter(student=student).values_list(
-                "club__club_name", flat=True
-            )
-            print(clubs)
+
             meta_data = []
             for i in clubs:
                 notices = Notice.objects.filter(club__club_name=i).values_list(
@@ -149,8 +170,6 @@ def filter_notices(request):
                 meta_data.extend(
                     notices
                 )  # Flattening the queryset by appending each notice
-
-            print(meta_data)
             data = [
                 {
                     "id": notice[0],
