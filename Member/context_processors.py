@@ -2,7 +2,7 @@ from Dashboard.models import Club, Notice
 from .models import JoinRequest, MemberJoined, Notification
 from django.core.exceptions import ObjectDoesNotExist
 from authentication.models import Student
-
+from django.contrib.auth.models import AnonymousUser
 
 def Alerts(request):
     user = str(request.user)
@@ -68,12 +68,19 @@ def Alerts(request):
 
 def club_membership_status(request):
     club_list = Club.objects.all()
-    student = Student.objects.get(user=request.user)
-    user_clubs = MemberJoined.objects.filter(student=student).values_list(
-        "club__club_name", flat=True
-    )
     club_status = {}
 
+    # Check if the user is authenticated
+    if isinstance(request.user, AnonymousUser):
+        # If the user is not authenticated, return empty club status
+        return {"club_status": club_status}
+
+    # Proceed with getting user clubs if authenticated
+    user_clubs = MemberJoined.objects.filter(student__user=request.user).values_list(
+        "club__club_name", flat=True
+    )
+
+    # Build the club status dictionary
     for club in club_list:
         club_status[club.club_name] = club.club_name in user_clubs
 
