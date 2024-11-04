@@ -70,7 +70,7 @@ function renderNotices(data) {
   } else {
     resNotice.innerHTML = `<div class="card">
                                     <div class="card-body" style="text-align:center;color:white">
-                                        <h5><b>No Clubs Found</b></h5>
+                                        <h5><b>No Notices Found</b></h5>
                                     </div>
                                 </div>`;;
   }
