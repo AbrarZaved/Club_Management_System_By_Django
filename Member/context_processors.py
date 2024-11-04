@@ -64,3 +64,17 @@ def Alerts(request):
         "pending_notices": pending_notices,
         "all_notices": all_notices,
     }
+
+
+def club_membership_status(request):
+    club_list = Club.objects.all()
+    student = Student.objects.get(user=request.user)
+    user_clubs = MemberJoined.objects.filter(student=student).values_list(
+        "club__club_name", flat=True
+    )
+    club_status = {}
+
+    for club in club_list:
+        club_status[club.club_name] = club.club_name in user_clubs
+
+    return {"club_status": club_status}

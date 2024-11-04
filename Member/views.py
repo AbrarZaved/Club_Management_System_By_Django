@@ -15,11 +15,8 @@ def join_request(request):
     if request.method == "POST":
         student = Student.objects.get(user=request.user)
         club = Club.objects.get(club_name=request.POST["club_name"])
-
-        if MemberJoined.objects.filter(student=student, club=club).exists():
-            messages.info(request, "You are already Member of this Club")
-            return redirect("club")
-        elif JoinRequest.objects.filter(student=student, club=club).exists():
+        
+        if JoinRequest.objects.filter(student=student, club=club).exists():
             messages.info(request, "Request Already Sent")
             return redirect("club")
         else:
