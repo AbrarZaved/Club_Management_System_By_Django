@@ -12,17 +12,28 @@ document.head.appendChild(style);
 const resNotice = document.getElementById("result_notices");
 resNotice.style.display = "none";
 
-// Get notice ID from URL path
-const urlParams = window.location.pathname;
-const noticeId = urlParams.slice(8); // Adjust according to your URL structure
-console.log(noticeId);
+// Wait for the DOM to load, then filter notices and apply glow effect if needed
+document.addEventListener("DOMContentLoaded", () => {
+  // Flag to ensure glow effect only runs once
+  let glowExecuted = false;
 
-// Call Glow function after DOM content has loaded if there's a noticeId
-if (noticeId) {
-  document.addEventListener("DOMContentLoaded", () => {
-    filterNotices("All"); // Initialize with default filter
+  // Filter notices and apply glow effect once notices are rendered
+  filterNotices("All").then(() => {
+    const urlParams = window.location.pathname;
+    const noticeId = urlParams.slice(8); // Adjust according to your URL structure
+    console.log(
+      "Glowing notice with ID:",
+      noticeId,
+      "on page load",
+      glowExecuted
+    );
+
+    if (noticeId && !glowExecuted) {
+      Glow(noticeId);
+      glowExecuted = true; // Set to true after first execution
+    }
   });
-}
+});
 
 // Dropdown item selection for filtering notices
 document.querySelectorAll("#filterValues .dropdown-item").forEach((item) => {
@@ -31,21 +42,19 @@ document.querySelectorAll("#filterValues .dropdown-item").forEach((item) => {
     const selectedValue = this.getAttribute("data-value");
     document.getElementById("dropdownMenuButton").textContent =
       selectedValue === "All" ? "All Notices" : selectedValue;
-
     filterNotices(selectedValue);
   });
 });
 
 // Function to filter notices based on the selected club
 function filterNotices(selectedClub) {
-  fetch("/filter_notices", {
+  return fetch("/filter_notices", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text: selectedClub }),
   })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       renderNotices(data);
     })
     .catch((error) => {
@@ -64,15 +73,12 @@ function renderNotices(data) {
       .join("");
     resNotice.innerHTML = `<div class="row">${rowContainer}</div>`;
     addPreviewListeners();
-
-    // Apply Glow function after rendering
-    if (noticeId) Glow(noticeId);
   } else {
     resNotice.innerHTML = `<div class="card">
                                     <div class="card-body" style="text-align:center;color:white">
                                         <h5><b>No Notices Found</b></h5>
                                     </div>
-                                </div>`;;
+                                </div>`;
   }
 }
 
@@ -150,13 +156,10 @@ function Glow(noticeId) {
     setTimeout(() => {
       targetNotice.classList.remove("glow-effect");
     }, 500);
+    return true;
   }
+  return false;
 }
-
-// Call filterNotices on page load for "All" category
-document.addEventListener("DOMContentLoaded", () => {
-  filterNotices("All");
-});
 
 // Search functionality for notices
 const searchBar = document.getElementById("searchBar");
