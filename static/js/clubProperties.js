@@ -1,4 +1,4 @@
-console.log("hello boys");
+
 
 var all_clubs = document.getElementById("all_clubs");
 var searchText = document.getElementById("searchBar");
@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
   })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       if (data.length > 0) {
         data.forEach((element) => {
           clubs.push(element.club_name); // Push club names into the array
@@ -50,7 +49,6 @@ function filterClub(selectedClub) {
   })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       if (data.length > 0) {
         resClub.innerHTML = ""; // Clear previous results
         all_clubs.style.display = "none"; // Hide the club list
@@ -68,7 +66,6 @@ function searchClub(text) {
   })
     .then((res) => res.json())
     .then((data) => {
-      console.log("data: ", data);
       resClub.innerHTML = ""; // Clear previous results
       all_clubs.style.display = "none"; // Hide the club list
 
@@ -88,7 +85,6 @@ function searchClub(text) {
 // Event listener for search input
 searchText.addEventListener("keyup", (e) => {
   text = e.target.value.trim(); // Get trimmed search text
-  console.log(text);
   if (text.length > 0) {
     searchClub(text); // Call search function if there's input
   } else {
@@ -99,7 +95,6 @@ searchText.addEventListener("keyup", (e) => {
 
 // Function to render the club cards dynamically
 function renderClub(data, selectedClub) {
-  console.log(selectedClub);
   let rowContainer = '<div class="row">'; // Start the row for clubs
   resClub.style.display = "block"; // Show the result container
 
