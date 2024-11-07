@@ -116,7 +116,7 @@ function renderClub(data, selectedClub) {
       if (all(element.club_name)) {
         button = ` <button type="button" class="btn btn-info" disabled="True" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="">Joined</button>`;
       } else {
-        button = ` <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="${element.club_name}">Join</button>`;
+        button = ` <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="${element.club_name}">Join</button>`;
       }
     }
 
