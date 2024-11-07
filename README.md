@@ -22,8 +22,8 @@
 
 <h3>Prerequisites</h3>
 <ul>
-  <li><a href="https://www.python.org/">Python 3.x</a> installed on your machine</li>
-  <li><a href="https://www.djangoproject.com/">Django</a> (Version: specify your version)</li>
+  <li><a href="https://www.python.org/">Python 3.12</a> installed on your machine</li>
+  <li><a href="https://www.djangoproject.com/">Django</a> (Version: 5.1)</li>
   <li>Additional dependencies listed in <code>requirements.txt</code></li>
 </ul>
 
