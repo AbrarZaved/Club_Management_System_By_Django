@@ -2,6 +2,24 @@ console.log("hello boys");
 var all_clubs = document.getElementById("all_clubs");
 var searchText = document.getElementById("searchBar");
 var resClub = document.getElementById("result_clubs");
+let clubs = [];
+document.addEventListener("DOMContentLoaded", () => {
+  selectedClub = "joined";
+  fetch("/club_properties", {
+    method: "POST",
+    body: JSON.stringify({ selectedClub: selectedClub }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      if (data.length > 0) {
+        data.forEach((element) => {
+          clubs.push(element.club_name);
+        });
+      }
+    });
+});
+
 resClub.style.display = "none";
 document.querySelectorAll("#filterValues .dropdown-item").forEach((item) => {
   item.addEventListener("click", function (e) {
@@ -11,7 +29,10 @@ document.querySelectorAll("#filterValues .dropdown-item").forEach((item) => {
     filterClub(selectedClub);
   });
 });
-
+function all(club_name) {
+  if (clubs.includes(club_name)) return true;
+  else return false;
+}
 function filterClub(selectedClub) {
   fetch("/club_properties", {
     method: "POST",
@@ -23,7 +44,8 @@ function filterClub(selectedClub) {
       if (data.length > 0) {
         resClub.innerHTML = "";
         all_clubs.style.display = "none";
-        renderClub(data);
+
+        renderClub(data, selectedClub);
       }
     });
 }
@@ -45,7 +67,7 @@ function searchClub(text) {
                                     </div>
                                 </div>`;
       } else {
-        renderClub(data);
+        renderClub(data, searchClub);
       }
     });
 }
@@ -60,11 +82,24 @@ searchText.addEventListener("keyup", (e) => {
     all_clubs.style.display = "block";
   }
 });
-function renderClub(data) {
+function renderClub(data, selectedClub) {
+  console.log(selectedClub);
   let rowContainer = '<div class="row">';
   resClub.style.display = "block";
   // Loop through the data and add each card to the row container
+
   data.forEach((element) => {
+    if (selectedClub === "joined") {
+      var button = ` <button type="button" class="btn btn-success" disabled="True" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="">Joined</button>`;
+    } else if (selectedClub === "explore") {
+      var button = ` <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="${element.club_name}">Join</button>`;
+    } else {
+      if (all(element.club_name)) {
+        var button = ` <button type="button" class="btn btn-success" disabled="True" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="">Joined</button>`;
+      } else {
+        var button = ` <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="${element.club_name}">Join</button>`;
+      }
+    }
     rowContainer += `
                                 <div class="col-md-4">
                                 <div class="card mb-3" style="width: 18rem;">
@@ -74,16 +109,13 @@ function renderClub(data) {
                                     <p class="card-text">${element.about_club}</p>
                                     <div class="d-flex justify-content-between">
                                         <a href="${element.club_link}" class="btn btn-primary">View More</a>
-                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="${element.club_name}">
-                                        Join
-                                        </button>
+                                        ${button}
                                     </div>
                                     </div>
                                 </div>
                                 </div>
                             `;
   });
-
   // Close the row container
   rowContainer += "</div>";
 
