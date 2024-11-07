@@ -48,7 +48,7 @@ document.querySelectorAll("#filterValues .dropdown-item").forEach((item) => {
 
 // Function to filter notices based on the selected club
 function filterNotices(selectedClub) {
-  return fetch("/filter_notices", {
+  return fetch("/notice_properties", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text: selectedClub }),
@@ -169,7 +169,7 @@ searchBar.addEventListener("keyup", (e) => {
   if (searchValue.length === 0) {
     filterNotices("All");
   } else {
-    fetch("/filter_notices", {
+    fetch("/notice_properties", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ search_value: searchValue }),

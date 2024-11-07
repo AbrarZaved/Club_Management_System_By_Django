@@ -120,17 +120,90 @@ def delete_notice(request, boom):
     return redirect("notice")
 
 
-def search_clubs(request):
+def club_properties(request):
     if request.method == "POST":
+        user = request.user
+        student = Student.objects.get(user=user)
+        selectedClub = json.loads(request.body).get("selectedClub")
         club_name = json.loads(request.body).get("text")
-        data = Club.objects.filter(
-            Q(club_name__icontains=club_name) | Q(tag=club_name)
-        ).values("club_name", "image", "about_club", "club_link", "tag")
+        if selectedClub:
+            data = {}
+            if selectedClub == "joined":
+                meta_data = MemberJoined.objects.filter(student=student).values_list(
+                    "club__club_name",
+                    "club__image",
+                    "club__about_club",
+                    "club__club_link",
+                    "club__tag",
+                )
+                data = [
+                    {
+                        "club_name": club[0],
+                        "image": club[1],
+                        "about_club": club[2],
+                        "club_link": club[3],
+                        "tag": club[4],
+                    }
+                    for club in meta_data
+                ]
+                return JsonResponse(list(data), safe=False)
+            if selectedClub == "explore":
+                data = {}
+                club_list = list(
+                    Club.objects.values_list("club_name", flat=True)
+                )  # Directly convert to list
+                member_clubs = list(
+                    MemberJoined.objects.filter(student=student).values_list(
+                        "club__club_name", flat=True
+                    )
+                )  # Use flat=True to get a flat list of club names
+                for i in [club for club in club_list if club not in member_clubs]:  # Filter `club_list` to only items not in `member_clubs`
+                    meta_data = Club.objects.filter(club_name=i).values_list(
+                        "club_name",
+                        "image",
+                        "about_club",
+                        "club_link",
+                        "tag",
+                    )
+                data = [
+                    {
+                        "club_name": club[0],
+                        "image": club[1],
+                        "about_club": club[2],
+                        "club_link": club[3],
+                        "tag": club[4],
+                    }
+                    for club in meta_data
+                ]
+                return JsonResponse(list(data), safe=False)
+            if selectedClub=="All": # Filter `club_list` to only items not in `member_clubs`
+                meta_data = Club.objects.all().values_list(
+                    "club_name",
+                    "image",
+                    "about_club",
+                    "club_link",
+                    "tag",
+                )
+                data = [
+                    {
+                        "club_name": club[0],
+                        "image": club[1],
+                        "about_club": club[2],
+                        "club_link": club[3],
+                        "tag": club[4],
+                    }
+                    for club in meta_data
+                ]
+                return JsonResponse(list(data), safe=False)
+        if club_name:
+            data = Club.objects.filter(
+                Q(club_name__icontains=club_name) | Q(tag=club_name)
+            ).values("club_name", "image", "about_club", "club_link", "tag")
 
-        return JsonResponse(list(data), safe=False)
+            return JsonResponse(list(data), safe=False)
 
 
-def filter_notices(request):
+def notice_properties(request):
     if request.method == "POST":
         club_name = json.loads(request.body).get("text")
         search_value = json.loads(request.body).get("search_value")
@@ -140,13 +213,20 @@ def filter_notices(request):
             "club__club_name", flat=True
         )
         if search_value:
-            
+
             meta_data = Notice.objects.filter(
                 Q(club__club_name__icontains=search_value)
                 | Q(title__icontains=search_value)
                 | Q(description__icontains=search_value)
                 | Q(club__tag__icontains=search_value)
-            ).values_list("id", "title", "description", "club__club_name", "club__tag", "created_at")
+            ).values_list(
+                "id",
+                "title",
+                "description",
+                "club__club_name",
+                "club__tag",
+                "created_at",
+            )
             data = [
                 {
                     "id": notice[0],
@@ -154,7 +234,7 @@ def filter_notices(request):
                     "description": notice[2],
                     "club_name": notice[3],
                     "created_at": notice[5],
-                    "tag":notice[4]
+                    "tag": notice[4],
                 }
                 for notice in meta_data
             ]
