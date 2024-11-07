@@ -122,20 +122,20 @@ function renderClub(data, selectedClub) {
 
     // Add club card to the row container
     rowContainer += `
-                                <div class="col-md-4">
-                                <div class="card mb-3" style="width: 18rem;">
-                                    <img src="/media/${element.image}" class="card-img-top" alt="...">
-                                    <div class="card-body">
-                                    <h5 class="card-title">${element.club_name}</h5>
-                                    <p class="card-text">${element.about_club}</p>
-                                    <div class="d-flex justify-content-between">
-                                        <a href="${element.club_link}" class="btn btn-primary">View More</a>
-                                        ${button}
-                                    </div>
-                                    </div>
-                                </div>
-                                </div>
-                            `;
+                      <div class="col-md-4">
+                      <div class="card mb-3" style="width: 18rem;">
+                          <img src="/media/${element.image}" class="card-img-top" alt="...">
+                          <div class="card-body">
+                          <h5 class="card-title">${element.club_name}</h5>
+                          <p class="card-text">${element.about_club}</p>
+                          <div class="d-flex justify-content-between">
+                              <a href="${element.club_link}" class="btn btn-primary">View More</a>
+                              ${button}
+                          </div>
+                          </div>
+                      </div>
+                      </div>
+                  `;
   });
 
   rowContainer += "</div>"; // Close the row container
