@@ -108,15 +108,15 @@ function renderClub(data, selectedClub) {
     // Set button text based on the selected club type
     let button;
     if (selectedClub === "joined") {
-      button = ` <button type="button" class="btn btn-success" disabled="True" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="">Joined</button>`;
+      button = ` <button type="button" class="btn btn-info" disabled="True" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="">Joined</button>`;
     } else if (selectedClub === "explore") {
-      button = ` <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="${element.club_name}">Join</button>`;
+      button = ` <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="${element.club_name}">Join</button>`;
     } else {
       // If club is already joined, disable button
       if (all(element.club_name)) {
-        button = ` <button type="button" class="btn btn-success" disabled="True" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="">Joined</button>`;
+        button = ` <button type="button" class="btn btn-info" disabled="True" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="">Joined</button>`;
       } else {
-        button = ` <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="${element.club_name}">Join</button>`;
+        button = ` <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModalCenter" data-club-name="${element.club_name}">Join</button>`;
       }
     }
 
