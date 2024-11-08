@@ -94,7 +94,8 @@ def notice(request, pk=None):
 
         # Get counts of notices per club
         clubs_with_notice = [
-            (club, Notice.objects.filter(club__club_name=club).count()) for club in clubs
+            (club, Notice.objects.filter(club__club_name=club).count())
+            for club in clubs
         ]
 
         return render(
@@ -287,6 +288,7 @@ def notice_properties(request):
             for notice in notices
         ]
         # Sort by creation date if "All" clubs are selected
+        data.sort(key=lambda x: x["created_at"], reverse=True)
         if club_name == "All":
             data.sort(key=lambda x: x["created_at"], reverse=True)
         return JsonResponse(data, safe=False)
