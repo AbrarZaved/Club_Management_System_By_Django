@@ -84,18 +84,6 @@ function renderNotices(data) {
 
 // Function to create a notice card
 function createNoticeCard(element) {
-  const createdAt = element.created_at;
-  const date = new Date(createdAt);
-  const options = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  };
-  const formattedDate = date.toLocaleString("en-US", options);
-
   return `
     <div class="col-6" id="notice-${element.id}">
       <div class="card text-white bg-success col-12">
@@ -107,12 +95,12 @@ function createNoticeCard(element) {
         <div class="d-flex justify-content-between align-items-center">
           <span class="badge bg-light text-success">${
             element.club_name
-          } | ${formattedDate}</span>
+          } | ${element.created_at}</span>
           <button class="btn btn-success btn-sm preview-button" data-toggle="modal" data-target="#previewModal"
                   data-title="${element.title}" data-description="${
     element.description
   }" data-club="${element.club_name}"
-                  data-time="${formattedDate}">
+                  data-time="${element.created_at}">
             <i class="material-icons">preview</i>
           </button>
         </div>

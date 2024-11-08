@@ -7,6 +7,14 @@ from Member.models import Notification, MemberJoined
 from django.http import HttpResponse, JsonResponse
 import json
 from django.db.models import Q
+from zoneinfo import ZoneInfo
+
+
+def format_time_dhaka(time):
+    # Convert to Dhaka timezone using zoneinfo
+    dhaka_tz = ZoneInfo("Asia/Dhaka")
+    local_time = time.astimezone(dhaka_tz)
+    return local_time.strftime("%B %d, %Y at %I:%M %p")
 
 
 def home(request):
@@ -35,7 +43,7 @@ def dashboard(request):
         unique_key = f"{notice['title']}_{notice['created_at'].strftime('%B %d, %Y at %I:%M %p')}"
         recent_notices[unique_key] = {
             "club": notice["club__club_name"],
-            "time": notice["created_at"].strftime("%B %d, %Y at %I:%M %p"),
+            "time": format_time_dhaka(notice["created_at"]),
             "id": notice["id"],
         }
 
@@ -55,34 +63,22 @@ def club_list(request):
 
 @login_required
 def notice(request, pk=None):
-    user = request.user
-    student = Student.objects.get(user=user)
-    form_data = {}
+    admin_name = request.user.username[6:]
+    user = str(request.user)
+    student = Student.objects.get(user=request.user)
 
-    if "admin" in str(user):
-        # Admin logic
-        club = Club.objects.get(tag=user.username[6:])
-
+    if "admin" in user:
+        club_name = Club.objects.get(tag=admin_name)
         if request.method == "POST":
-            title, description = request.POST["title"], request.POST["description"]
-            Notice.objects.create(title=title, description=description, club=club)
+            title = request.POST["title"]
+            description = request.POST["description"]
+            Notice.objects.create(title=title, description=description, club=club_name)
             messages.success(request, "Notice Added")
             return redirect("notice")
-
-        # Fetch notices for the admin's club
-        notices = Notice.objects.filter(club=club).values(
-            "id", "title", "description", "club__club_name", "created_at", "id"
-        )
-        for notice in notices:
-            unique_key = f"{notice['title']}_{notice['created_at'].strftime('%B %d, %Y at %I:%M %p')}"
-            form_data[unique_key] = {
-                "description": notice["description"],
-                "club": notice["club__club_name"],
-                "time": notice["created_at"].strftime("%B %d, %Y at %I:%M %p"),
-                "id": notice["id"],
-            }
-
+        return render(request, "dashboard/notice.html")
     else:
+        form_data = {}
+
         # Member logic
         clubs = MemberJoined.objects.filter(student=student).values_list(
             "club__club_name", flat=True
@@ -98,20 +94,19 @@ def notice(request, pk=None):
 
         # Get counts of notices per club
         clubs_with_notice = [
-            (club, Notice.objects.filter(club__club_name=club).count())
-            for club in clubs
+            (club, Notice.objects.filter(club__club_name=club).count()) for club in clubs
         ]
 
-    return render(
-        request,
-        "dashboard/notice.html",
-        {
-            "form_data": form_data,
-            "clubs_with_notices": (
-                clubs_with_notice if "admin" not in str(user) else None
-            ),
-        },
-    )
+        return render(
+            request,
+            "dashboard/notice.html",
+            {
+                "form_data": form_data,
+                "clubs_with_notices": (
+                    clubs_with_notice if "admin" not in str(user) else None
+                ),
+            },
+        )
 
 
 def delete_notice(request, boom):
@@ -157,7 +152,9 @@ def club_properties(request):
                         "club__club_name", flat=True
                     )
                 )  # Use flat=True to get a flat list of club names
-                for i in [club for club in club_list if club not in member_clubs]:  # Filter `club_list` to only items not in `member_clubs`
+                for i in [
+                    club for club in club_list if club not in member_clubs
+                ]:  # Filter `club_list` to only items not in `member_clubs`
                     meta_data = Club.objects.filter(club_name=i).values_list(
                         "club_name",
                         "image",
@@ -176,7 +173,9 @@ def club_properties(request):
                     for club in meta_data
                 ]
                 return JsonResponse(list(data), safe=False)
-            if selectedClub=="All": # Filter `club_list` to only items not in `member_clubs`
+            if (
+                selectedClub == "All"
+            ):  # Filter `club_list` to only items not in `member_clubs`
                 meta_data = Club.objects.all().values_list(
                     "club_name",
                     "image",
@@ -204,75 +203,92 @@ def club_properties(request):
 
 
 def notice_properties(request):
-    if request.method == "POST":
-        club_name = json.loads(request.body).get("text")
-        search_value = json.loads(request.body).get("search_value")
-        user = request.user
-        student = Student.objects.get(user=user)
-        clubs = MemberJoined.objects.filter(student=student).values_list(
-            "club__club_name", flat=True
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method"}, status=400)
+
+    # Parse request body
+    data = json.loads(request.body)
+    club_name = data.get("text")
+    search_value = data.get("search_value")
+    user = request.user
+
+    # Check if the user is a student or an admin
+    if "admin" in str(user):
+        # Admin logic: Extract club based on the admin's username (assumes admin username format)
+        club_tag = user.username[6:]
+        club = Club.objects.get(tag=club_tag)
+
+        # Handle notice creation for admins
+        if request.POST.get("title") and request.POST.get("description"):
+            title = request.POST["title"]
+            description = request.POST["description"]
+            Notice.objects.create(title=title, description=description, club=club)
+            messages.success(request, "Notice Added")
+            return redirect("notice")
+
+        # Fetch notices for the admin's club
+        notices = Notice.objects.filter(club=club).values(
+            "id", "title", "description", "club__club_name", "created_at"
         )
-        if search_value:
+        form_data = [
+            {
+                "id": notice["id"],
+                "title": notice["title"],
+                "description": notice["description"],
+                "club_name": notice["club__club_name"],
+                "created_at": format_time_dhaka(notice["created_at"]),
+            }
+            for notice in notices
+        ]
+        return JsonResponse(form_data, safe=False)
 
-            meta_data = Notice.objects.filter(
-                Q(club__club_name__icontains=search_value)
-                | Q(title__icontains=search_value)
-                | Q(description__icontains=search_value)
-                | Q(club__tag__icontains=search_value)
-            ).values_list(
-                "id",
-                "title",
-                "description",
-                "club__club_name",
-                "club__tag",
-                "created_at",
-            )
-            data = [
-                {
-                    "id": notice[0],
-                    "title": notice[1],
-                    "description": notice[2],
-                    "club_name": notice[3],
-                    "created_at": notice[5],
-                    "tag": notice[4],
-                }
-                for notice in meta_data
-            ]
-            return JsonResponse(list(data), safe=False)
+    # If user is a student, fetch their clubs
+    student = Student.objects.get(user=user)
+    clubs = MemberJoined.objects.filter(student=student).values_list(
+        "club__club_name", flat=True
+    )
 
+    # Search functionality for students
+    if search_value:
+        meta_data = Notice.objects.filter(
+            Q(club__club_name__icontains=search_value)
+            | Q(title__icontains=search_value)
+            | Q(description__icontains=search_value)
+            | Q(club__tag__icontains=search_value)
+        ).values(
+            "id", "title", "description", "club__club_name", "club__tag", "created_at"
+        )
+        data = [
+            {
+                "id": notice["id"],
+                "title": notice["title"],
+                "description": notice["description"],
+                "club_name": notice["club__club_name"],
+                "created_at": format_time_dhaka(notice["created_at"]),
+                "tag": notice["club__tag"],
+            }
+            for notice in meta_data
+        ]
+        return JsonResponse(data, safe=False)
+
+    # Fetch notices for "All" clubs or a specific club
+    if club_name:
+        notices = Notice.objects.filter(
+            club__club_name__in=clubs if club_name == "All" else [club_name]
+        ).values("id", "title", "description", "club__club_name", "created_at")
+        data = [
+            {
+                "id": notice["id"],
+                "title": notice["title"],
+                "description": notice["description"],
+                "club_name": notice["club__club_name"],
+                "created_at": format_time_dhaka(notice["created_at"]),
+            }
+            for notice in notices
+        ]
+        # Sort by creation date if "All" clubs are selected
         if club_name == "All":
+            data.sort(key=lambda x: x["created_at"], reverse=True)
+        return JsonResponse(data, safe=False)
 
-            meta_data = []
-            for i in clubs:
-                notices = Notice.objects.filter(club__club_name=i).values_list(
-                    "id", "title", "description", "club__club_name", "created_at"
-                )
-                meta_data.extend(
-                    notices
-                )  # Flattening the queryset by appending each notice
-            data = [
-                {
-                    "id": notice[0],
-                    "title": notice[1],
-                    "description": notice[2],
-                    "club_name": notice[3],
-                    "created_at": notice[4],
-                }
-                for notice in meta_data
-            ]
-            data = sorted(data, key=lambda x: x["created_at"], reverse=True)
-            return JsonResponse(list(data), safe=False)
-
-        else:
-            meta_data = Notice.objects.filter(club__club_name=club_name)
-            data = [
-                {
-                    "id": notice.id,
-                    "title": notice.title,
-                    "description": notice.description,
-                    "club_name": notice.club.club_name,
-                    "created_at": notice.created_at,
-                }
-                for notice in meta_data
-            ]
-            return JsonResponse(data, safe=False)
+    return JsonResponse({"error": "Invalid data"}, status=400)
