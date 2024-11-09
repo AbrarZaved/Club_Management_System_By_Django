@@ -15,6 +15,7 @@ urlpatterns = [
     path("", include("Dashboard.urls")),
     path("auth/", include("authentication.urls")),
     path("member/", include("Member.urls")),
+    path("event/", include("Event.urls")),
     path("all/", include(router.urls)),
 ]
 

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "authentication",
     "Member",
+    "Event",
     "rest_framework",
 ]
 

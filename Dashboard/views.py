@@ -52,8 +52,7 @@ def dashboard(request):
     )
 
 
-def add_event(request):
-    return render(request, "dashboard/add_event.html")
+
 
 
 def club_list(request):
