@@ -7,6 +7,7 @@ from Dashboard.models import Club, Notice
 from django.db.models.signals import post_delete, post_save, pre_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import User
+from Event.models import Event
 
 
 class JoinRequest(models.Model):
@@ -80,6 +81,7 @@ class Notification(models.Model):
     )
     Student = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     notice = models.ForeignKey(Notice, on_delete=models.CASCADE, null=True, blank=True)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return str(self.Student) + " " + self.notification_type
@@ -113,7 +115,7 @@ def delete_notification_on_approval(sender, instance, **kwargs):
 
 
 @receiver(post_save, sender=Notice)
-def create_event_notification(sender, instance, **kwargs):
+def create_notice_notification(sender, instance, **kwargs):
     if instance.read == False:
         members = [
             member.student for member in MemberJoined.objects.filter(club=instance.club)
