@@ -1,0 +1,128 @@
+{% extends "sidebar/main.html" %}
+{% block title %}Events{% endblock %}
+{% block content %}
+<div class="wrapper">
+  <div class="sidebar" data-color="purple" data-background-color="black" data-image="css/assets/img/sidebar-2.jpg">
+    <!-- Sidebar Logo -->
+    <div class="logo">
+      <a href="{% url 'dashboard' %}" class="simple-text logo-normal">DIU_CLUBS</a>
+    </div>
+
+    {% include 'sidebar/navbar.html' %}
+
+    <!-- Content Area -->
+    <div class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header card-header-primary d-flex justify-content-between align-items-center">
+              <h3 class="card-title">Events</h3>
+
+              <div>
+                {% if "admin" not in user.username %}
+                <!-- Dropdown for Non-admin Users -->
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    All Events
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="filterValues">
+                    <a class="dropdown-item" href="#" data-value="All">All</a>
+                    <a class="dropdown-item" href="#" data-value=""></a>
+                  </div>
+                </div>
+                {% endif %}
+
+                {% if "admin" in user.username %}
+                <!-- Button for Admins to Add Event -->
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal">
+                  Add Event
+                </button>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+              <div class="container">
+                <div class="row" id="result_notices"></div>
+              </div>
+
+              <!-- Add Notice Modal -->
+              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content" style="color: black;">
+                    <div class="modal-header mt-3">
+                      <h5 class="modal-title" id="modalLabel">EVENT INFO</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <form id="EventForm" method="post" action="{% url 'event' %}">
+                          {% csrf_token %}
+                          
+                          <!-- Event Name and Description Fields -->
+                          <div class="mb-3">
+                              <label for="name" style="color: gray;">Event Name</label>
+                              {{ form.event_name }}<br>
+                              <label for="description" style="color: gray;">Event Description</label>
+                              {{ form.event_description }}
+                          </div>
+
+                          <!-- Event Date and Time Fields -->
+                          <div class="row">
+                              <div class="col-md-6 mb-3">
+                                  <label for="event_date" style="color: gray;">Event Date</label>
+                                  {{ form.event_date }}
+                              </div>
+                              <div class="col-md-6 mb-3">
+                                  <label for="event_time" style="color: gray;">Event Time</label>
+                                  {{ form.event_time }}
+                              </div>
+                          </div>
+
+                          <!-- Event Link and Club Fields Side by Side -->
+                          <div class="row">
+                              <div class="col-md-6 mb-3">
+                                  <label for="event_link" style="color: gray;">Event Link</label>
+                                  {{ form.event_link }}
+                              </div>
+                              <div class="col-md-6 mb-3">
+                                  <label for="event_club" style="color: gray;">Event Club</label>
+                                  {{ form.event_club }}
+                              </div>
+                          </div>
+                          
+                          <!-- Event Image and Location Fields -->
+                          <div class="row">
+                              <div class="col-md-6 mb-3">
+                                  <label for="event_image" style="color: gray;">Event Image</label>
+                                  {{ form.event_image }}
+                              </div>
+                              <div class="col-md-6 mb-3">
+                                  <label for="event_location" style="color: gray;">Event Location</label>
+                                  {{ form.event_location }}
+                              </div>
+                              <br><br>
+                          </div>
+
+                          <!-- Submit Button -->
+                          <div class="modal-footer mt-5">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Add Event</button>
+                          </div>
+                      </form>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End of Modal -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
