@@ -1,4 +1,5 @@
 {% extends "sidebar/main.html" %}
+{% load static %}
 {% block title %}Events{% endblock %}
 {% block content %}
 <div class="wrapper">
@@ -31,6 +32,7 @@
                   </div>
                 </div>
                 {% endif %}
+                
 
                 {% if "admin" in user.username %}
                 <!-- Button for Admins to Add Event -->
@@ -44,8 +46,59 @@
             <!-- Card Body -->
             <div class="card-body">
               <div class="container">
-                <div class="row" id="result_notices"></div>
+                <div class="row">
+                  {% for event in events %}
+                  <div class="col-md-4">
+                    <div class="card mb-3" style="width: 18rem;">
+                      <img src="{{ event.event_image.url }}" class="card-img-top" alt="Event Image">
+                      <div class="card-body">
+                        <h5 class="card-title">{{ event.event_name }}</h5>
+                        <p class="card-text">{{ event.event_description|truncatewords:10 }}</p>
+                        <div class="d-flex justify-content-between">
+                          <!-- 'View More' Button that triggers the preview modal -->
+                          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#previewModal-{{ event.id }}">
+                            View More
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Preview Modal for Event Details -->
+                  <div class="modal fade" id="previewModal-{{ event.id }}" tabindex="-1" aria-labelledby="previewModalLabel-{{ event.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content" style="background-color:black; color: white;">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="previewModalLabel-{{ event.id }}">{{ event.event_name }}</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" style="color:white">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <img src="{{ event.event_image.url }}" class="img-fluid mb-3" alt="Event Image">
+                          <h4>{{ event.event_name }}</h4>
+                          <p>{{ event.event_description }}</p>
+                          <p><strong>Date:</strong> {{ event.event_date }}</p>
+                          <p><strong>Time:</strong> {{ event.event_time }}</p>
+                          <p><strong>Club:</strong> {{ event.event_club }}</p>
+                          <p><strong>Location:</strong> {{ event.event_location }}</p>
+                          <p><strong>Event Link:</strong> <a href="{{ event.event_link }}" target="_blank">{{ event.event_link }}</a></p>
+                        </div>
+                        <div class="modal-footer">
+                            <form method="post" action="{% url 'event_attendee' event.id %}">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-success">Attend</button>
+                            </form>
+                          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
               </div>
+
+
 
               <!-- Add Notice Modal -->
               <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
@@ -118,6 +171,7 @@
                 </div>
               </div>
               <!-- End of Modal -->
+
             </div>
           </div>
         </div>

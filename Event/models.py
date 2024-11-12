@@ -12,7 +12,13 @@ class Event(models.Model):
     event_time = models.TimeField()
     event_location = models.CharField(max_length=100)
     event_description = models.TextField()
-    event_image = models.ImageField(
+    event_image1 = models.ImageField(
+        upload_to="event_image", blank=True, default="profile_pic/new_logo.png"
+    )
+    event_image2 = models.ImageField(
+        upload_to="event_image", blank=True, default="profile_pic/new_logo.png"
+    )
+    event_image3 = models.ImageField(
         upload_to="event_image", blank=True, default="profile_pic/new_logo.png"
     )
     event_link = models.URLField(blank=True, null=True)
@@ -38,7 +44,7 @@ class EventAttender(models.Model):
         ordering = ["-attended_at"]  # Most recent attendees first
 
     def __str__(self):
-        return f"{self.student.username} - {self.event.event_name}"
+        return f"{self.student} - {self.event.event_name}"
 
 
 @receiver(post_save, sender=Event)
