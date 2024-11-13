@@ -104,17 +104,16 @@ function createNoticeCard(element) {
         <div class="d-flex justify-content-between align-items-center">
           <span class="badge bg-light text-success">${element.club_name} | ${
     element.created_at
-  }</span>
-          
+  }</span>          
           <!-- Buttons aligned side by side with consistent size -->
           <div class="d-flex">
-            <button class="btn btn-info btn-sm preview-button mr-2" data-toggle="modal" data-target="#previewModal"
-                    data-title="${element.title}" data-description="${
-    element.description
-  }"
+            <button class="btn btn-info btn-sm preview-button mr-2" data-toggle="modal" data-target="#previewModal" data-title="${
+              element.title
+            }" data-description="${element.description}"
                     data-club="${element.club_name}" data-time="${
     element.created_at
-  }">
+  }"
+  data-id="${element.id}">
               <i class="material-icons">preview</i>
             </button>
             ${deleteButton}
@@ -133,6 +132,7 @@ function addPreviewListeners() {
       const description = this.getAttribute("data-description");
       const club = this.getAttribute("data-club");
       const time = this.getAttribute("data-time");
+      const id = this.getAttribute("data-id");
 
       // Update the modal with sliced title
       document.getElementById("preview-title").innerText =
@@ -140,6 +140,8 @@ function addPreviewListeners() {
       document.getElementById("preview-description").innerText = description;
       document.getElementById("preview-club").innerText = club;
       document.getElementById("preview-time").innerText = time;
+      document.getElementById("delete_button").href =
+        "http://127.0.0.1:8000/delete_notice/" + id;
     });
   });
 }
