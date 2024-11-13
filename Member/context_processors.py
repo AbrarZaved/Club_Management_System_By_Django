@@ -9,7 +9,7 @@ def Alerts(request):
     is_admin = "admin" in user
     total_notifications = 0
     pending_joining_requests = 0
-    pending_event_requests = 0
+    pending_events = []
     pending_notices = []
     all_notices = 0
 
@@ -29,11 +29,26 @@ def Alerts(request):
                         club__club_name=club_name,
                         user_type="general_user",
                         Student__username=user,
+                        notification_type="notices"
                     ).count()
 
                     if count > 0:
                         pending_notices.append((count, club_name))
                         total_notifications += count
+                
+                for club_name in clubs:
+                    count = Notification.objects.filter(
+                        club__club_name=club_name,
+                        user_type="general_user",
+                        Student__username=user,
+                        notification_type="events"
+                    ).count()
+
+                    if count > 0:
+                        pending_events.append((count, club_name))
+                        total_notifications += count
+
+                
 
             except ObjectDoesNotExist:
                 pass
@@ -60,7 +75,7 @@ def Alerts(request):
     return {
         "total_notifications": total_notifications,
         "pending_joining_requests": pending_joining_requests,
-        "pending_event_requests": pending_event_requests,
+        "pending_events": pending_events,
         "pending_notices": pending_notices,
         "all_notices": all_notices,
     }

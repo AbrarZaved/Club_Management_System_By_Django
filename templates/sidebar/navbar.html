@@ -105,9 +105,9 @@
                           <a class="dropdown-item" href="{% url 'my_club' %}">You have {{pending_joining_requests}} joining {% if pending_joining_requests == 1 %}request {% else %} requests{% endif %}</a>
                       {% endif %}
 
-                      {% if pending_event_requests %}
-                        {% for notification in pending_event_requests %}
-                          <a class="dropdown-item" href="javascript:void(0)">You have {{notification.total}} event approval</a>
+                      {% if pending_events %}
+                        {% for total, clubs in pending_events %}
+                          <a class="dropdown-item" href="javascript:void(0)">{{clubs}} have posted {{total}} new {% if total == 1 %} event {% else %} events {% endif %}</a>
                         {% endfor %}
                       {% endif %}
                       {% if pending_notices %}

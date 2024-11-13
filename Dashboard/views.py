@@ -89,7 +89,7 @@ def notice(request, pk=None):
         )
 
         # Clear notifications for this user
-        Notification.objects.filter(Student__username=str(user)).delete()
+        Notification.objects.filter(Student__username=str(user),notification_type="notices").delete()
 
         # Get counts of notices per club
         clubs_with_notice = [
