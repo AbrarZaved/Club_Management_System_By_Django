@@ -135,8 +135,7 @@ function addPreviewListeners() {
       const id = this.getAttribute("data-id");
 
       // Update the modal with sliced title
-      document.getElementById("preview-title").innerText =
-        sliceFromLastUnderscore(title);
+      document.getElementById("preview-title").innerText = title;
       document.getElementById("preview-description").innerText = description;
       document.getElementById("preview-club").innerText = club;
       document.getElementById("preview-time").innerText = time;
@@ -144,12 +143,6 @@ function addPreviewListeners() {
         "http://127.0.0.1:8000/delete_notice/" + id;
     });
   });
-}
-
-// Function to slice title from the last underscore and limit to 15 characters
-function sliceFromLastUnderscore(title) {
-  const lastUnderscoreIndex = title.lastIndexOf("_");
-  return lastUnderscoreIndex > -1 ? title.slice(0, lastUnderscoreIndex) : title;
 }
 
 // Function to apply a glowing effect to a notice element
