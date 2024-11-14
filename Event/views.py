@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render
+from django.contrib import messages
 
 from Dashboard.models import Club
 from Event.forms import EventForm
@@ -17,7 +18,14 @@ def event(request):
             "club__club_name", flat=True
         )
     )
-
+    club_list = [
+        (
+            (club),
+            (Event.objects.filter(event_club__club_name=club)).count(),
+        )
+        for club in clubs
+    ]
+    print(club_list)
     events = Event.objects.filter(event_club__club_name__in=clubs)
 
     form = EventForm()
@@ -34,11 +42,18 @@ def event(request):
         Student__username=str(user), notification_type="events"
     ).delete()
 
-    return render(request, "event/event.html", {"form": form, "events": events})
+    return render(
+        request,
+        "event/event.html",
+        {"form": form, "events": events, "club_list": club_list},
+    )
 
 
 def event_attendee(request, boom):
     event = Event.objects.get(id=boom)
     student = Student.objects.get(user=request.user)
+    if EventAttender.objects.filter(event=event, student=student).exists():
+        messages.warning(request, "You have already registered for this event")
+        return redirect("event")
     EventAttender.objects.create(event=event, student=student, is_going=True)
     return redirect("event")

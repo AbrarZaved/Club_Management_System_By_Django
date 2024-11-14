@@ -13,6 +13,7 @@
 
     <!-- Content Area -->
     <div class="content">
+      {% include "sidebar/message.html" %}
       <div class="row">
         <div class="col-md-12">
           <div class="card">
@@ -27,8 +28,10 @@
                     All Events
                   </button>
                   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="filterValues">
-                    <a class="dropdown-item" href="#" data-value="All">All</a>
-                    <a class="dropdown-item" href="#" data-value=""></a>
+                    <a class="dropdown-item" href="#" data-value="All">All ({{all_events}})</a>
+                    {% for club,total in club_list %}
+                    <a class="dropdown-item" href="#" data-value="">{{club}} ({{total}})</a>
+                    {% endfor %}
                   </div>
                 </div>
                 {% endif %}
