@@ -35,7 +35,7 @@
             </li>
             {% endif %}
 
-            <li class="nav-item {% if request.resolver_match.url_name == 'event' %}active{% endif %}">
+            <li class="nav-item {% if request.resolver_match.url_name == 'event' or request.resolver_match.url_name == 'event_management' %}active{% endif %}">
               <a class="nav-link" href="{% url 'event' %}">
                 <i class="material-icons">library_books</i>
                 <p>Events</p>
@@ -61,7 +61,7 @@
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top " id="navigation-example">
           <div class="container-fluid">
             <div class="navbar-wrapper">
-              <a class="navbar-brand" href="javascript:void(0)">Dashboard</a>
+              <a class="navbar-brand" href="javascript:void(0)"></a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation" data-target="#navigation-example">
               <span class="sr-only">Toggle navigation</span>

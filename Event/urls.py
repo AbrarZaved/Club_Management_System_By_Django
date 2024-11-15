@@ -6,4 +6,5 @@ from django.http import HttpResponse
 urlpatterns = [
     path("event", views.event, name="event"),
     path("event_attendee/<int:boom>", views.event_attendee, name="event_attendee"),
+    path("event_management", views.event_management, name="event_management"),
 ]

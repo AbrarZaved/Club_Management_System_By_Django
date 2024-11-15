@@ -57,3 +57,13 @@ def event_attendee(request, boom):
         return redirect("event")
     EventAttender.objects.create(event=event, student=student, is_going=True)
     return redirect("event")
+
+
+def event_management(request):
+    form=EventForm()
+    admin_name = request.user.username[6:]
+    club_name = Club.objects.get(tag=admin_name)
+    events = EventAttender.objects.filter(event__event_club=club_name)
+    students=EventAttender.objects.filter(event__event_club=club_name).values_list("student__user__username", flat=True)
+    print(students)
+    return render(request, "event/event_management.html", {"events": events, "form": form})
