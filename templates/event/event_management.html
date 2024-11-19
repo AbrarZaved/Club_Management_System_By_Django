@@ -1,15 +1,12 @@
-{% extends "sidebar/main.html" %} {% load static %} {% block title %}Events {% endblock %} {% block content %}
+{% extends "sidebar/main.html" %}
+{% load static %}
+{% block title %}Events{% endblock %}
+{% block content %}
 <div class="wrapper">
-  <div
-    class="sidebar"
-    data-color="purple"
-    data-background-color="black"
-    data-image="css/assets/img/sidebar-2.jpg">
+  <div class="sidebar" data-color="purple" data-background-color="black" data-image="css/assets/img/sidebar-2.jpg">
     <!-- Sidebar Logo -->
     <div class="logo">
-      <a href="{% url 'dashboard' %}" class="simple-text logo-normal"
-        >DIU_CLUBS</a
-      >
+      <a href="{% url 'dashboard' %}" class="simple-text logo-normal">DIU_CLUBS</a>
     </div>
 
     {% include 'sidebar/navbar.html' %}
@@ -20,27 +17,14 @@
       <div class="row">
         <div class="col-md-12">
           <div class="card">
-            <div
-              class="card-header d-flex justify-content-between align-items-center"
-              style="background-color: #020f16; color: white">
+            <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #020f16; color: white">
               {% if "admin" in user.username %}
-              <nav
-                style="
-                  --bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%278%27 height=%278%27%3E%3Cpath d=%27M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z%27 fill=%276c757d%27/%3E%3C/svg%3E');
-                "
-                aria-label="breadcrumb">
+              <nav style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%278%27 height=%278%27%3E%3Cpath d=%27M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z%27 fill=%276c757d%27/%3E%3C/svg%3E');" aria-label="breadcrumb">
                 <ol class="breadcrumb bg-transparent">
                   <li class="breadcrumb-item">
-                    <a
-                      href="{% url 'event' %}"
-                      style="color: {% if request.resolver_match.url_name == 'event' %}white{% else %}#6c757d{% endif %}; font-size: 1.2rem;">
-                      Event Dashboard
-                    </a>
+                    <a href="{% url 'event' %}" style="color: {% if request.resolver_match.url_name == 'event' %}white{% else %}#6c757d{% endif %}; font-size: 1.2rem;">Event Dashboard</a>
                   </li>
-                  <li
-                    class="breadcrumb-item active"
-                    aria-current="page"
-                    style="color: {% if request.resolver_match.url_name == 'event_management' %}white{% else %}#6c757d{% endif %}; font-size: 1.2rem;">
+                  <li class="breadcrumb-item active" aria-current="page" style="color: {% if request.resolver_match.url_name == 'event_management' %}white{% else %}#6c757d{% endif %}; font-size: 1.2rem;">
                     Event Management
                   </li>
                 </ol>
@@ -52,27 +36,13 @@
               <!-- Dropdown for Non-admin Users -->
               {% if "admin" not in user.username %}
               <div class="dropdown">
-                <button
-                  class="btn btn-secondary dropdown-toggle"
-                  type="button"
-                  id="dropdownMenuButton"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                   All Events
                 </button>
-                <ul
-                  class="dropdown-menu"
-                  aria-labelledby="dropdownMenuButton"
-                  id="filterValues">
-                  <li>
-                    <a class="dropdown-item" href="#">All ({{all_events}})</a>
-                  </li>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="filterValues">
+                  <li><a class="dropdown-item" href="#">All ({{ all_events }})</a></li>
                   {% for club, total in club_list %}
-                  <li>
-                    <a class="dropdown-item" href="#"
-                      >{{ club }} ({{ total }})</a
-                    >
-                  </li>
+                  <li><a class="dropdown-item" href="#">{{ club }} ({{ total }})</a></li>
                   {% endfor %}
                 </ul>
               </div>
@@ -80,107 +50,28 @@
 
               <!-- Button for Admins to Add Event -->
               {% if "admin" in user.username %}
-              <button
-                type="button"
-                class="btn"
-                style="background-color: #212f3c; color: white"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal">
-                Add New Event
-              </button>
+              <button type="button" class="btn" style="background-color: #212f3c; color: white" data-bs-toggle="modal" data-bs-target="#exampleModal">Add New Event</button>
               {% endif %}
             </div>
 
             <!-- Accordion Section -->
             <div class="accordion" id="accordionExample">
-            {% for event, attendees in data.items %}
-            <div class="card">
-              <div class="card-header" id="heading{{ forloop.counter }}">
-                <h4 class="mb-0 d-flex justify-content-between align-items-center">
-                  <button
-                    class="btn btn-link"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#collapse{{ forloop.counter }}"
-                    aria-expanded="false"
-                    aria-controls="collapse{{ forloop.counter }}"
-                    style="color: white; font-size: 1rem;">
-                    {{ event }}
-                  </button>
-                  <span class="ms-auto" style="color: white;">hehe</span>
-                </h4>
-              </div>
-
-              <div
-                id="collapse{{ forloop.counter }}"
-                class="collapse"
-                aria-labelledby="heading{{ forloop.counter }}"
-                data-parent="#accordionExample">
-                <div class="container py-3">
-                  <div class="row">
-                    <div class="col-12 mb-3">
-                      <div class="overflow-hidden card table-nowrap table-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                          <h5 class="mb-0" style="color:white">Attendees</h5>
-                        </div>
-                        <div class="table-responsive">
-                        <table class="table table-bordered mb-0">
-                          <thead class="small text-uppercase bg-dark text-white">
-                            <tr>
-                              <th class="text-center">Name</th>
-                              <th class="text-center">ID</th>
-                              <th class="text-center">Email</th>
-                              <th class="text-center">Phone Number</th>
-                              <th class="text-center">Attended Date</th>
-                              <th class="text-center">Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for attendee in attendees %}
-                            <tr class="align-middle">
-                              <td class="text-center">{{ attendee.full_name }}</td>
-                              <td class="text-center">{{ attendee.student_id }}</td>
-                              <td class="text-center">{{ attendee.email }}</td>
-                              <td class="text-center">{{ attendee.phone_number }}</td>
-                              <td class="text-center">{{ attendee.attended_at }}</td>
-                              <td class="text-center">
-                              <button class="btn btn-info btn-sm me-2" title="View Profile">
-                                <i class="material-icons">preview</i>
-                              </button>
-                              <button class="btn btn-danger btn-sm" title="Delete">
-                                <i class="material-icons">delete</i>
-                              </button>
-
-                              </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                              <td colspan="6" class="text-center">No attendees found.</td>
-                            </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              
             </div>
-            {% endfor %}
           </div>
-              <!-- Add Event Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                  <div class="modal-content" style="color: black;">
-                    <div class="modal-header mt-3">
-                      <h5 class="modal-title" id="modalLabel">EVENT INFO</h5>
-                      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <form id="EventForm" method="post" action="{% url 'event' %}">
+
+          <!-- Add Event Modal -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content" style="color: black;">
+                <div class="modal-header mt-3">
+                  <h5 class="modal-title" id="modalLabel">EVENT INFO</h5>
+                  <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form id="EventForm" method="post" action="{% url 'event' %}" enctype="multipart/form-data">
                           {% csrf_token %}
                           
                           <!-- Event Name and Description Fields -->
@@ -220,10 +111,10 @@
                               <div class="col-md-6 mb-3">
                                   <label for="event_image" style="color: gray;">Event Images<br></label>
                                   <div class="d-flex">
-                                      <div class="mr-3">
+                                      <div class="mr-3" style="max-width: 250px;">
                                           {{ form.event_image1 }}
                                       </div>
-                                      <div class="mr-3">
+                                      <div class="mr-3" style="max-width: 250px;">
                                           {{ form.event_image2 }}
                                       </div>
                                       <div class="mr-3">
@@ -231,7 +122,6 @@
                                       </div><br><br>
                                   </div>
                               </div>
-
                           </div>
                           <div class="mb-3">
                               <label for="event_location" style="color: gray;">Event Location</label>
@@ -244,22 +134,16 @@
                             <button type="submit" class="btn btn-primary">Add Event</button>
                           </div>
                       </form>
-
-                    </div>
-                  </div>
                 </div>
               </div>
-            <!-- End of Modal -->
+            </div>
           </div>
+
         </div>
       </div>
     </div>
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
-<!-- Bootstrap 5 and jQuery CDN -->
-
+<script src="{% static 'js/eventProperties.js' %}"></script>
 {% endblock %}

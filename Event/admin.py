@@ -11,5 +11,5 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(EventAttender)
 class EventAttenderAdmin(admin.ModelAdmin):
-    list_display = ["event", "student", "is_going"]
+    list_display = ["id","event", "student", "is_going"]
     list_filter = ["is_going"]

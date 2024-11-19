@@ -7,4 +7,12 @@ urlpatterns = [
     path("event", views.event, name="event"),
     path("event_attendee/<int:boom>", views.event_attendee, name="event_attendee"),
     path("event_management", views.event_management, name="event_management"),
+    path(
+        "delete_event_attendee/<str:attendee_id>/<str:event_name>",
+        csrf_exempt(views.delete_event_attendee),
+        name="delete_event_attendee",
+    ),
+    path(
+        "event_properties", csrf_exempt(views.event_properties), name="event_properties"
+    ),
 ]

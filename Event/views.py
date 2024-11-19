@@ -1,4 +1,5 @@
-from django.shortcuts import redirect, render
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 
 from Dashboard.models import Club
@@ -35,12 +36,9 @@ def event(request):
         events = Event.objects.filter(event_club__club_name=club_name)
         if request.method == "POST":
             form = EventForm(request.POST)
-            if Event.objects.filter(event_name=form.event_name).exists():
-                messages.warning(request, "Event already exists")
-                return redirect("event")
             if form.is_valid():
                 form.save()
-                return redirect(request, "event")
+                return redirect("event")
         return render(request, "event/event.html", {"form": form, "events": events})
     Notification.objects.filter(
         Student__username=str(user), notification_type="events"
@@ -65,45 +63,75 @@ def event_attendee(request, boom):
 
 def event_management(request):
     form = EventForm()
-    admin_name = request.user.username[6:]
-    club_name = Club.objects.get(tag=admin_name)
-    members = MemberJoined.objects.filter(club=club_name)
-    events = list(
-        Event.objects.filter(event_club__club_name=club_name).values_list(
-            "event_name", flat=True
-        )
-    )
-    data = {}
-    for event in events:
-        attendees = EventAttender.objects.filter(event__event_name=event).values(
-            "student__user__first_name",
-            "student__user__last_name",
-            "student__student_id",
-            "student__user__email",
-            "student__phone_number",
-            "attended_at",
-            "student__id",
-            "student__profile_pic",
-            "student__dept",
-        )
-
-        # Creating a list with full name and other details
-        data[event] = [
-            {
-                "full_name": f"{attendee['student__user__first_name']} {attendee['student__user__last_name']}",
-                "student_id": attendee["student__student_id"],
-                "email": attendee["student__user__email"],
-                "phone_number": attendee["student__phone_number"],
-                "attended_at": attendee["attended_at"],
-                "id": attendee["student__id"],
-                "profile_pic": attendee["student__profile_pic"],
-                "dept": attendee["student__dept"],
-            }
-            for attendee in attendees
-        ]
 
     return render(
         request,
         "event/event_management.html",
-        {"events": events, "data": data, "form": form, "members": members},
+        {"form": form},
     )
+
+
+def delete_event_attendee(request, attendee_id, event_name):
+    if request.method == "DELETE":
+        try:
+            attendee = EventAttender.objects.get(
+                student__student_id=attendee_id,
+                event__event_name=event_name,
+            )
+            attendee.delete()
+            return JsonResponse(
+                {"message": "Attendee deleted successfully"}, status=200
+            )
+        except EventAttender.DoesNotExist:
+            return JsonResponse({"error": "Attendee not found"}, status=404)
+    return JsonResponse({"error": "Invalid request method"}, status=400)
+
+
+def event_properties(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+
+    admin_name = request.user.username[6:]
+    club = get_object_or_404(Club, tag=admin_name)
+
+
+    # Fetch events for the club
+    events = Event.objects.filter(event_club=club).select_related("event_club")
+    data = []
+
+    for event in events:
+        attendees = (
+            EventAttender.objects.filter(event=event)
+            .select_related("student__user")
+            .values(
+                "student__user__first_name",
+                "student__user__last_name",
+                "student__student_id",
+                "student__user__email",
+                "student__phone_number",
+                "attended_at",
+                "student__profile_pic",
+                "student__dept",
+            )
+        )
+
+        # Prepare the data for each event
+        event_data = {
+            "event_name": event.event_name,
+            "total_count": len(attendees),
+            "attendees": [
+                {
+                    "full_name": f"{attendee['student__user__first_name']} {attendee['student__user__last_name']}",
+                    "student_id": attendee["student__student_id"],
+                    "email": attendee["student__user__email"],
+                    "phone_number": attendee["student__phone_number"],
+                    "attended_at": attendee["attended_at"],
+                    "profile_pic": attendee["student__profile_pic"],
+                    "dept": attendee["student__dept"],
+                }
+                for attendee in attendees
+            ],
+        }
+        data.append(event_data)
+
+    return JsonResponse(data, safe=False)

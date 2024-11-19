@@ -198,7 +198,7 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      <form id="EventForm" method="post" action="{% url 'event' %}">
+                      <form id="EventForm" method="post" action="{% url 'event' %}" enctype="multipart/form-data">
                           {% csrf_token %}
                           
                           <!-- Event Name and Description Fields -->
@@ -249,7 +249,6 @@
                                       </div><br><br>
                                   </div>
                               </div>
-
                           </div>
                           <div class="mb-3">
                               <label for="event_location" style="color: gray;">Event Location</label>
