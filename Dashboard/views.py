@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+
+from Event.models import Event
 from .models import Club, Notice
 from authentication.models import Student
 from Member.models import Notification, MemberJoined
@@ -37,6 +39,13 @@ def dashboard(request):
             ]  # Get the latest 3
         )
         recent_notices = {}
+
+        events = (
+            Event.objects.filter(event_club=club_name)
+            .order_by("-created_at")
+            .values("event_image1", "id")[:3]
+        )
+
         # Format data for rendering
         for notice in clubs_with_notices:
             unique_key = f"{notice['title']}_{notice['created_at'].strftime('%B %d, %Y at %I:%M %p')}"
@@ -47,11 +56,19 @@ def dashboard(request):
             }
 
         return render(
-            request, "dashboard/dashboard.html", {"recent_notices": recent_notices}
+            request,
+            "dashboard/dashboard.html",
+            {"recent_notices": recent_notices, "events": events},
         )
     # Get club names the student has joined
     clubs = MemberJoined.objects.filter(student=student).values_list(
         "club__club_name", flat=True
+    )
+    print(clubs)
+    events = (
+        Event.objects.filter(event_club__club_name__in=clubs)
+        .order_by("-created_at")
+        .values("event_image1", "id")[:3]
     )
 
     # Fetch recent notices for these clubs
@@ -72,7 +89,9 @@ def dashboard(request):
         }
 
     return render(
-        request, "dashboard/dashboard.html", {"recent_notices": recent_notices}
+        request,
+        "dashboard/dashboard.html",
+        {"recent_notices": recent_notices, "events": events},
     )
 
 
@@ -245,7 +264,8 @@ def notice_properties(request):
             "id", "title", "description", "club__club_name", "created_at"
         )
         form_data = [
-            {   "is_admin": True,
+            {
+                "is_admin": True,
                 "id": notice["id"],
                 "title": notice["title"],
                 "description": notice["description"],

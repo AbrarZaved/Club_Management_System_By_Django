@@ -1,7 +1,9 @@
+import json
+from django.db.models import Q
+from django.db.models.lookups import IContains
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-
 from Dashboard.models import Club
 from Event.forms import EventForm
 from Event.models import Event, EventAttender
@@ -10,7 +12,7 @@ from authentication.models import Student
 
 
 # Create your views here.
-def event(request):
+def event(request,pk=None):
 
     user = request.user
     student = Student.objects.get(user=user)
@@ -94,7 +96,6 @@ def event_properties(request):
     admin_name = request.user.username[6:]
     club = get_object_or_404(Club, tag=admin_name)
 
-
     # Fetch events for the club
     events = Event.objects.filter(event_club=club).select_related("event_club")
     data = []
@@ -135,3 +136,89 @@ def event_properties(request):
         data.append(event_data)
 
     return JsonResponse(data, safe=False)
+
+
+def event_search(request):
+    searchText = json.loads(request.body).get("text", "")
+    admin_name = request.user.username[6:]
+
+    if "admin" in admin_name:
+        club = get_object_or_404(Club, tag=admin_name)
+        events = list(
+            Event.objects.filter(
+                Q(event_name__icontains=searchText), event_club=club
+            ).values(
+                "id",
+                "event_name",
+                "event_date",
+                "event_time",
+                "event_location",
+                "event_description",
+                "event_club",
+                "event_image1",
+                "event_image2",
+                "event_image3",
+                "event_link",
+            )
+        )
+        data = [
+            {
+                "id": event["id"],
+                "event_name": event["event_name"],
+                "event_date": event["event_date"],
+                "event_time": event["event_time"],
+                "event_location": event["event_location"],
+                "event_description": event["event_description"],
+                "event_club": event["event_club"],
+                "event_image1": event["event_image1"],
+                "event_image2": event["event_image2"],
+                "event_image3": event["event_image3"],
+                "event_link": event["event_link"],
+            }
+            for event in events
+        ]
+
+        return JsonResponse(data, safe=False)
+    else:
+        user = request.user
+        student = Student.objects.get(user=user)
+        clubs = list(
+            MemberJoined.objects.filter(student=student).values_list(
+                "club__club_name", flat=True
+            )
+        )
+        events = list(
+            Event.objects.filter(
+                Q(event_name__icontains=searchText), event_club__club_name__in=clubs
+            ).values(
+                "id",
+                "event_name",
+                "event_date",
+                "event_time",
+                "event_location",
+                "event_description",
+                "event_club",
+                "event_image1",
+                "event_image2",
+                "event_image3",
+                "event_link",
+            )
+        )
+        data = [
+            {
+                "id": event["id"],
+                "event_name": event["event_name"],
+                "event_date": event["event_date"],
+                "event_time": event["event_time"],
+                "event_location": event["event_location"],
+                "event_description": event["event_description"],
+                "event_club": event["event_club"],
+                "event_image1": event["event_image1"],
+                "event_image2": event["event_image2"],
+                "event_image3": event["event_image3"],
+                "event_link": event["event_link"],
+            }
+            for event in events
+        ]
+
+        return JsonResponse(data, safe=False)

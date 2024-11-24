@@ -13,22 +13,42 @@
           <div class="row">
             <div class="col-xl-4 col-lg-12">
               <div class="card card-chart">
-                <div class="card-header card-header-success">
-                  <div class="ct-chart" id="dailySalesChart"></div>
+                <div class="card-header ">
+                  <div class="ct-chart" id="websiteViewsChart"></div>
+                  <div id="noticesCarousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                      {% for event in events %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                          <div class="card" style="width: 18rem; margin: auto;">
+                            <a href="{% url 'eventDetails' event.id %}"> <!-- Replace 'event_detail' with your URL name -->
+                              <img src="/media/{{ event.event_image1 }}" class="d-block w-100" alt="Event Image">
+                            </a>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+
+                    <!-- Carousel controls -->
+                    <a class="carousel-control-prev" href="#noticesCarousel" role="button" data-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#noticesCarousel" role="button" data-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="sr-only">Next</span>
+                    </a>
+                  </div>
                 </div>
                 <div class="card-body">
-                  <h4 class="card-title">Daily Events</h4>
-                  <p class="card-category">
-                    <span class="text-success"><i class="fa fa-long-arrow-up"></i> 55% </span> increase in today sales.
-                  </p>
+                  <h4 class="card-title">Events</h4>
+                  <p class="card-category">A quick recap of your recent events</p>
                 </div>
                 <div class="card-footer">
-                  <div class="stats">
-                    <i class="material-icons">access_time</i> updated 4 minutes ago
-                  </div>
+                  <!-- Footer content if required -->
                 </div>
               </div>
             </div>
+
 
             <div class="col-xl-4 col-lg-12">
               <div class="card card-chart">

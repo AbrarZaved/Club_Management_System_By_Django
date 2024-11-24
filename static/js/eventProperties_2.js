@@ -1,24 +1,18 @@
+const accordion = document.getElementById("accordionExample");
+const colors = [
+  "#4B0082",
+  "#2C3E50",
+  "#8B0000",
+  "#006400",
+  "#800080",
+  "#4B0082",
+  "#D2691E",
+  "#4F4A4A",
+  "#3E2723",
+  "#2E4053",
+];
+let eventTotalCounts = {};
 document.addEventListener("DOMContentLoaded", () => {
-  const accordion = document.getElementById("accordionExample");
-
-  // Object to store total counts for each event
-  let eventTotalCounts = {};
-
-  // Define a set of colors
-  const colors = [
-    "#4B0082",
-    "#2C3E50",
-    "#8B0000",
-    "#006400",
-    "#800080",
-    "#4B0082",
-    "#D2691E",
-    "#4F4A4A",
-    "#3E2723",
-    "#2E4053",
-  ];
-
-  // Fetch data from the server on page load
   fetch("event_properties", {
     method: "POST",
     headers: {
@@ -31,17 +25,24 @@ document.addEventListener("DOMContentLoaded", () => {
       accordion.innerHTML = ""; // Clear existing content
 
       if (data && data.length > 0) {
-        data.forEach((element, index) => {
-          eventTotalCounts[element.event_name] = element.total_count;
+        render_data(data);
+      }
+    })
+    .catch((err) => console.error("Error fetching data:", err));
+});
 
-          // Prepare the attendees table or fallback message
-          let attendees = "";
-          let tableHeader = "";
-          let attendeesHTML = "";
-          if (element.attendees && element.attendees.length > 0) {
-            element.attendees.forEach((attendee) => {
-              attendees = `Attendees`;
-              tableHeader = `<thead class="small text-uppercase bg-dark text-white">
+function render_data(data) {
+  data.forEach((element, index) => {
+    eventTotalCounts[element.event_name] = element.total_count;
+
+    // Prepare the attendees table or fallback message
+    let attendees = "";
+    let tableHeader = "";
+    let attendeesHTML = "";
+    if (element.attendees && element.attendees.length > 0) {
+      element.attendees.forEach((attendee) => {
+        attendees = `Attendees`;
+        tableHeader = `<thead class="small text-uppercase bg-dark text-white">
                               <tr>
                                 <th class="text-center">Name</th>
                                 <th class="text-center">ID</th>
@@ -51,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <th class="text-center">Action</th>
                               </tr>
                             </thead>`;
-              attendeesHTML += ` 
+        attendeesHTML += ` 
                 <tr class="align-middle attendee-row" data-attendee-id="${attendee.id}">
                   <td class="text-center">${attendee.full_name}</td>
                   <td class="text-center">${attendee.student_id}</td>
@@ -67,21 +68,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     </a>
                   </td>
                 </tr>`;
-            });
-          } else {
-            attendeesHTML = `
+      });
+    } else {
+      attendeesHTML = `
               <div class="card">
                 <div class="card-body" style="text-align:center;color:white">
                   <h5><b>No Attendees</b></h5>
                 </div>
               </div>`;
-          }
+    }
 
-          // Assign a color to the card based on its index
-          const cardColor = colors[index % colors.length];
+    // Assign a color to the card based on its index
+    const cardColor = colors[index % colors.length];
 
-          // Add the event card to the accordion
-          accordion.innerHTML += `
+    // Add the event card to the accordion
+    accordion.innerHTML += `
             <div class="card mb-3 shadow">
               <div class="card-header d-flex justify-content-between align-items-center text-white" id="heading${index}" style="border-radius: 0.5rem; background-color:${cardColor};">
                 <h4 class="mb-0">
@@ -121,39 +122,39 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
             </div>`;
 
-          // Add delete button functionality
-          const deleteButtons = document.querySelectorAll(".delete-button");
-          deleteButtons.forEach((button) => {
-            button.addEventListener("click", function () {
-              const attendeeId = this.getAttribute("data-attendee-id");
-              const eventName = this.getAttribute("data-event-name");
-              const row = this.closest(".attendee-row");
+    // Add delete button functionality
+    const deleteButtons = document.querySelectorAll(".delete-button");
+    deleteButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const attendeeId = this.getAttribute("data-attendee-id");
+        const eventName = this.getAttribute("data-event-name");
+        const row = this.closest(".attendee-row");
 
-              const csrftoken = document.querySelector(
-                "[name=csrfmiddlewaretoken]"
-              ).value;
+        const csrftoken = document.querySelector(
+          "[name=csrfmiddlewaretoken]"
+        ).value;
 
-              fetch(`delete_event_attendee/${attendeeId}/${eventName}`, {
-                method: "DELETE",
-                headers: {
-                  "Content-Type": "application/json",
-                  "X-CSRFToken": csrftoken,
-                },
-              })
-                .then((response) => response.json())
-                .then((data) => {
-                  if (data.message) {
-                    eventTotalCounts[eventName] -= 1;
+        fetch(`delete_event_attendee/${attendeeId}/${eventName}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.message) {
+              eventTotalCounts[eventName] -= 1;
 
-                    const totalCountElement = document.getElementById(
-                      `total-count-${eventName}`
-                    );
-                    totalCountElement.textContent = `Total Attendees: ${eventTotalCounts[eventName]}`;
+              const totalCountElement = document.getElementById(
+                `total-count-${eventName}`
+              );
+              totalCountElement.textContent = `Total Attendees: ${eventTotalCounts[eventName]}`;
 
-                    if (eventTotalCounts[eventName] === 0) {
-                      const table = row.closest(".card");
-                      if (table) {
-                        table.innerHTML = `
+              if (eventTotalCounts[eventName] === 0) {
+                const table = row.closest(".card");
+                if (table) {
+                  table.innerHTML = `
                           <tr>
                             <td colspan="6" class="text-center text-white">
                               <div class="card">
@@ -163,24 +164,21 @@ document.addEventListener("DOMContentLoaded", () => {
                               </div>
                             </td>
                           </tr>`;
-                      }
-                    }
+                }
+              }
 
-                    row.style.transition =
-                      "opacity 0.5s ease-out, height 0.5s ease-out";
-                    row.style.opacity = "0";
-                    row.style.height = "0";
+              row.style.transition =
+                "opacity 0.5s ease-out, height 0.5s ease-out";
+              row.style.opacity = "0";
+              row.style.height = "0";
 
-                    setTimeout(() => row.remove(), 500);
-                  } else {
-                    console.error(data.error);
-                    alert("Error: " + data.error);
-                  }
-                });
-            });
+              setTimeout(() => row.remove(), 500);
+            } else {
+              console.error(data.error);
+              alert("Error: " + data.error);
+            }
           });
-        });
-      }
-    })
-    .catch((err) => console.error("Error fetching data:", err));
-});
+      });
+    });
+  });
+}
