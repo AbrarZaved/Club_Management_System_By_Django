@@ -4,9 +4,12 @@ var allEvents = document.getElementById("all_events");
 var searchResults = document.getElementById("search_results");
 
 const urlParams = window.location.pathname;
-const eventId = urlParams.slice(20); // Assuming event ID is at position 20 in the path
-console.log("Event ID:", eventId);
-
+const eventId = urlParams.slice(20);// Assuming event ID is at position 20 in the path
+let glowed = false;
+if (eventId && !glowed) {
+  Glow(eventId);
+  glowed = true;
+}
 // Style for glow effect
 const style = document.createElement("style");
 style.innerHTML = `
@@ -42,7 +45,8 @@ searchBar.addEventListener("keyup", (e) => {
   const text = e.target.value.trim(); // Get input value and trim whitespace
 
   if (text.length > 0) {
-    fetch("event_search", {
+    glowed=true;
+    fetch("http://127.0.0.1:8000/event/event_search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: text }),
@@ -158,7 +162,6 @@ searchBar.addEventListener("keyup", (e) => {
 
 function Glow(eventId) {
   const targetNotice = document.getElementById(`event-${eventId}`);
-  console.log("Target Notice:", targetNotice); // Debugging line
   if (targetNotice) {
     targetNotice.classList.add("glow-effect");
 
@@ -171,7 +174,4 @@ function Glow(eventId) {
     console.error(`Element with id 'event-${eventId}' not found`);
   }
   return false;
-}
-if (eventId) {
-  Glow(eventId)
 }
