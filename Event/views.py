@@ -12,7 +12,7 @@ from authentication.models import Student
 
 
 # Create your views here.
-def event(request,pk=None):
+def event(request, pk=None):
 
     user = request.user
     student = Student.objects.get(user=user)
@@ -139,58 +139,62 @@ def event_properties(request):
 
 
 def event_search(request):
-    searchText = json.loads(request.body).get("text", "")
+    search_text = json.loads(request.body).get("text", "")
     admin_name = request.user.username[6:]
 
-    if "admin" in admin_name:
+    if "admin" in str(request.user):
         club = get_object_or_404(Club, tag=admin_name)
-        events = list(
-            Event.objects.filter(
-                Q(event_name__icontains=searchText), event_club=club
-            ).values(
-                "id",
-                "event_name",
-                "event_date",
-                "event_time",
-                "event_location",
-                "event_description",
-                "event_club",
-                "event_image1",
-                "event_image2",
-                "event_image3",
-                "event_link",
-            )
+        events = Event.objects.filter(
+            Q(event_name__icontains=search_text), event_club=club
         )
-        data = [
-            {
-                "id": event["id"],
-                "event_name": event["event_name"],
-                "event_date": event["event_date"],
-                "event_time": event["event_time"],
-                "event_location": event["event_location"],
-                "event_description": event["event_description"],
-                "event_club": event["event_club"],
-                "event_image1": event["event_image1"],
-                "event_image2": event["event_image2"],
-                "event_image3": event["event_image3"],
-                "event_link": event["event_link"],
-            }
-            for event in events
-        ]
-
-        return JsonResponse(data, safe=False)
     else:
         user = request.user
         student = Student.objects.get(user=user)
-        clubs = list(
-            MemberJoined.objects.filter(student=student).values_list(
+        clubs = MemberJoined.objects.filter(student=student).values_list(
+            "club__club_name", flat=True
+        )
+        events = Event.objects.filter(
+            Q(event_name__icontains=search_text), event_club__club_name__in=clubs
+        )
+
+    data = list(
+        events.values(
+            "id",
+            "event_name",
+            "event_date",
+            "event_time",
+            "event_location",
+            "event_description",
+            "event_club",
+            "event_image1",
+            "event_image2",
+            "event_image3",
+            "event_link",
+        )
+    )
+    return JsonResponse(data, safe=False)
+
+
+def event_filter(request, pk=None):
+    if request.method == "POST":
+        user = request.user
+        admin_name = request.user.username[6:]
+        student = Student.objects.get(user=user)
+        selected_club = json.loads(request.body).get("selectedClub")
+
+        if "admin" in str(request.user):
+            club = get_object_or_404(Club, tag=admin_name)
+            events = Event.objects.filter(event_club=club)
+        elif selected_club == "All Events":
+            clubs = MemberJoined.objects.filter(student=student).values_list(
                 "club__club_name", flat=True
             )
-        )
-        events = list(
-            Event.objects.filter(
-                Q(event_name__icontains=searchText), event_club__club_name__in=clubs
-            ).values(
+            events = Event.objects.filter(event_club__club_name__in=clubs)
+        else:
+            events = Event.objects.filter(event_club__club_name=selected_club)
+
+        data = list(
+            events.values(
                 "id",
                 "event_name",
                 "event_date",
@@ -204,21 +208,4 @@ def event_search(request):
                 "event_link",
             )
         )
-        data = [
-            {
-                "id": event["id"],
-                "event_name": event["event_name"],
-                "event_date": event["event_date"],
-                "event_time": event["event_time"],
-                "event_location": event["event_location"],
-                "event_description": event["event_description"],
-                "event_club": event["event_club"],
-                "event_image1": event["event_image1"],
-                "event_image2": event["event_image2"],
-                "event_image3": event["event_image3"],
-                "event_link": event["event_link"],
-            }
-            for event in events
-        ]
-
         return JsonResponse(data, safe=False)

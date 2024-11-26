@@ -19,4 +19,7 @@ urlpatterns = [
     path(
         "event_search", csrf_exempt(views.event_search), name="event_search"
     ),
+    path(
+        "event_filter", csrf_exempt(views.event_filter), name="event_filter"
+    ),
 ]

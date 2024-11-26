@@ -2,13 +2,51 @@
 var searchBar = document.getElementById("searchBar");
 var allEvents = document.getElementById("all_events");
 var searchResults = document.getElementById("search_results");
+document.addEventListener("DOMContentLoaded", () => {
+  let glowed = false;
+  filterEvents("All Events").then(() => {
+    const urlParams = window.location.pathname;
+    const eventId = urlParams.slice(20); // Assuming event ID is at position 20 in the path
+    console.log(eventId);
+    if (eventId & !glowed) {
+      Glow(eventId);
+      glowed = true;
+    }
+  });
+});
 
-const urlParams = window.location.pathname;
-const eventId = urlParams.slice(20);// Assuming event ID is at position 20 in the path
-let glowed = false;
-if (eventId && !glowed) {
-  Glow(eventId);
-  glowed = true;
+var selectedValue = "All Events";
+document.querySelectorAll("#filterValues .dropdown-item").forEach((item) => {
+  item.addEventListener("click", function (event) {
+    event.preventDefault();
+    selectedValue = this.getAttribute("data-value");
+    document.getElementById("dropdownMenuButton").innerText = selectedValue;
+    console.log(selectedValue);
+    filterEvents(selectedValue);
+  });
+});
+
+function filterEvents(selectedClub) {
+  return fetch("http://127.0.0.1:8000/event/event_filter", {
+    method: "POST",
+    body: JSON.stringify({ selectedClub: selectedClub }),
+    headers: { "Content-Type": "application/json" },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      searchResults.innerHTML = "";
+      if (data.length > 0) {
+        allEvents.style.display = "none"; // Hide all events
+        searchResults.style.display = "block"; // Show search results
+
+        let cardsHTML = ""; // Initialize an empty string for the cards
+        cardsHTML += render_events(data);
+
+        // Wrap all the cards inside a row
+        searchResults.innerHTML = `<div class="row">${cardsHTML}</div>`;
+      }
+    });
 }
 // Style for glow effect
 const style = document.createElement("style");
@@ -24,7 +62,6 @@ style.innerHTML = `
       box-shadow: 0 0 10px rgba(169, 169, 169, 0.5); /* Slight gray outline when shrunk */
     }
 `;
-
 
 document.head.appendChild(style);
 
@@ -45,7 +82,7 @@ searchBar.addEventListener("keyup", (e) => {
   const text = e.target.value.trim(); // Get input value and trim whitespace
 
   if (text.length > 0) {
-    glowed=true;
+    glowed = true;
     fetch("http://127.0.0.1:8000/event/event_search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -65,9 +102,40 @@ searchBar.addEventListener("keyup", (e) => {
           searchResults.style.display = "block"; // Show search results
 
           let cardsHTML = ""; // Initialize an empty string for the cards
+          cardsHTML += render_events(data);
 
-          data.forEach((element) => {
-            cardsHTML += `
+          // Wrap all the cards inside a row
+          searchResults.innerHTML = `<div class="row">${cardsHTML}</div>`;
+
+          // Apply glow effect to the event found in the search results
+          // Ensure this works after rendering search results
+        } else {
+          allEvents.style.display = "none";
+          searchResults.style.display = "block";
+          searchResults.innerHTML = `
+              <div class="card">
+                <div class="card-body" style="text-align:center;color:white">
+                  <h5><b>No Events Found</b></h5>
+                </div>
+              </div>`;
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching search results:", error);
+        searchResults.innerHTML = "<p>Error fetching search results.</p>";
+      });
+  } else {
+    // Clear results and show all events when input is cleared
+    searchResults.innerHTML = "";
+    filterEvents(selectedValue);
+    searchResults.style.display = "block";
+    allEvents.style.display = "none";
+  }
+});
+function render_events(data) {
+  let cardsHTML = "";
+  data.forEach((element) => {
+    cardsHTML += `
                 <div class="col-md-4 mb-4">
                   <div class="card" style="width: 18rem;" id="event-${
                     element.id
@@ -131,35 +199,9 @@ searchBar.addEventListener("keyup", (e) => {
                   </div>
                 </div>
               `;
-          });
-
-          // Wrap all the cards inside a row
-          searchResults.innerHTML = `<div class="row">${cardsHTML}</div>`;
-
-          // Apply glow effect to the event found in the search results
-          Glow(eventId); // Ensure this works after rendering search results
-        } else {
-          allEvents.style.display = "none";
-          searchResults.style.display = "block";
-          searchResults.innerHTML = `
-              <div class="card">
-                <div class="card-body" style="text-align:center;color:white">
-                  <h5><b>No Events Found</b></h5>
-                </div>
-              </div>`;
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching search results:", error);
-        searchResults.innerHTML = "<p>Error fetching search results.</p>";
-      });
-  } else {
-    // Clear results and show all events when input is cleared
-    searchResults.style.display = "none";
-    allEvents.style.display = "flex";
-  }
-});
-
+  });
+  return cardsHTML;
+}
 function Glow(eventId) {
   const targetNotice = document.getElementById(`event-${eventId}`);
   if (targetNotice) {
