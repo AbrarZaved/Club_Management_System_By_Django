@@ -35,7 +35,7 @@
             </li>
             {% endif %}
 
-            <li class="nav-item {% if request.resolver_match.url_name == 'event' or request.resolver_match.url_name == 'event_management' %}active{% endif %}">
+            <li class="nav-item {% if request.resolver_match.url_name == 'event' or request.resolver_match.url_name == 'event_management' or request.resolver_match.url_name == 'eventDetails' %}active{% endif %}">
               <a class="nav-link" href="{% url 'event' %}">
                 <i class="material-icons">library_books</i>
                 <p>Events</p>

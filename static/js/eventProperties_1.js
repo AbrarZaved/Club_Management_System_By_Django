@@ -5,15 +5,16 @@ var searchResults = document.getElementById("search_results");
 document.addEventListener("DOMContentLoaded", () => {
   let glowed = false;
   filterEvents("All Events").then(() => {
-    const urlParams = window.location.pathname;
-    const eventId = urlParams.slice(20); // Assuming event ID is at position 20 in the path
-    console.log(eventId);
-    if (eventId & !glowed) {
-      Glow(eventId);
+    const urlParams = window.location.pathname.split("/");
+    const eventId = urlParams[urlParams.length - 1]; // Extract last segment
+    if (eventId && !glowed) {
+      const isGlowed = Glow(eventId);
+      console.log("Glowing event with ID:", eventId, "Success:", isGlowed);
       glowed = true;
     }
   });
 });
+
 
 var selectedValue = "All Events";
 document.querySelectorAll("#filterValues .dropdown-item").forEach((item) => {

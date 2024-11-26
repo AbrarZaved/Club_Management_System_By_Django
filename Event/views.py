@@ -29,7 +29,6 @@ def event(request, pk=None):
         )
         for club in clubs
     ]
-    print(club_list)
     events = Event.objects.filter(event_club__club_name__in=clubs)
 
     form = EventForm()
@@ -179,8 +178,10 @@ def event_search(request):
             "event_image2",
             "event_image3",
             "event_link",
+            "created_at",
         )
     )
+    data.sort(key=lambda x: x["created_at"], reverse=True)
     return JsonResponse(data, safe=False)
 
 
@@ -215,6 +216,10 @@ def event_filter(request, pk=None):
                 "event_image2",
                 "event_image3",
                 "event_link",
+                "created_at",
             )
         )
+        data.sort(key=lambda x: x["created_at"], reverse=True)
+        if selected_club == "All Events":
+            data.sort(key=lambda x: x["created_at"], reverse=True)
         return JsonResponse(data, safe=False)
