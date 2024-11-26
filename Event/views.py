@@ -1,3 +1,4 @@
+from django.contrib import messages
 import json
 from django.db.models import Q
 from django.db.models.lookups import IContains
@@ -37,9 +38,10 @@ def event(request, pk=None):
         club_name = Club.objects.get(tag=admin_name)
         events = Event.objects.filter(event_club__club_name=club_name)
         if request.method == "POST":
-            form = EventForm(request.POST)
+            form = EventForm(request.POST, request.FILES)
             if form.is_valid():
                 form.save()
+                messages.success(request, "Event created successfully")
                 return redirect("event")
         return render(request, "event/event.html", {"form": form, "events": events})
     Notification.objects.filter(
@@ -60,6 +62,7 @@ def event_attendee(request, boom):
         messages.warning(request, "You have already registered for this event")
         return redirect("event")
     EventAttender.objects.create(event=event, student=student, is_going=True)
+    messages.success(request, "You have successfully registered for this event")
     return redirect("event")
 
 
@@ -71,6 +74,12 @@ def event_management(request):
         "event/event_management.html",
         {"form": form},
     )
+
+
+def delete_event(request, boom):
+    event = Event.objects.get(id=boom)
+    event.delete()
+    return redirect("event")
 
 
 def delete_event_attendee(request, attendee_id, event_name):

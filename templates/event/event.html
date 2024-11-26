@@ -137,11 +137,17 @@
                     </div>
 
                     <div class="modal-footer">
+                      {% if "admin" in request.user.username %}
+                        <a class="btn btn-danger" href="{% url 'delete_event' event.id %}" id="delete_button" role="button">
+                          <i class="material-icons"></i>Delete
+                        </a>
+                      {% else %}
                       <form method="post" action="{% url 'event_attendee' event.id %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-success">Attend</button>
                       </form>
-                      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                      {% endif %}
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                   </div>
                 </div>

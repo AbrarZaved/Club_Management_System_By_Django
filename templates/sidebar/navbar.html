@@ -107,7 +107,7 @@
 
                       {% if pending_events %}
                         {% for total, clubs in pending_events %}
-                          <a class="dropdown-item" href="javascript:void(0)">{{clubs}} have posted {{total}} new {% if total == 1 %} event {% else %} events {% endif %}</a>
+                          <a class="dropdown-item" href="{% url 'event' %}">{{clubs}} have posted {{total}} new {% if total == 1 %} event {% else %} events {% endif %}</a>
                         {% endfor %}
                       {% endif %}
                       {% if pending_notices %}

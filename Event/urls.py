@@ -8,6 +8,7 @@ urlpatterns = [
     path("eventDetails/<int:pk>", views.event, name="eventDetails"),
     path("event_attendee/<int:boom>", views.event_attendee, name="event_attendee"),
     path("event_management", views.event_management, name="event_management"),
+    path("delete_event/<int:boom>", views.delete_event, name="delete_event"),
     path(
         "delete_event_attendee/<str:attendee_id>/<str:event_name>",
         csrf_exempt(views.delete_event_attendee),
