@@ -38,7 +38,7 @@ def user_login(request):
             return render(request, "authentication/sign.html")
 
     else:
-        return render(request, "authentication/sign.html")
+        return render(request, "authentication/sign_in.html")
 
 
 def user_registration(request):

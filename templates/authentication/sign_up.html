@@ -1,59 +1,114 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
-    <!-- Fonts and icons -->
-    <link href="{% static 'css/demo.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/sign_up.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/material-dashboard.css' %}" rel="stylesheet" />
-
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="{% static 'img/apple-icon.png' %}">
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+  <title>
+    DIU CLUBS
+  </title>
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+  <!-- Nucleo Icons -->
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <!-- CSS Files -->
+  <link id="pagestyle" href="{% static 'css/material-dashboard.min.css' %}" rel="stylesheet" />
+  <!-- Nepcha Analytics (nepcha.com) -->
+  <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
+  <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
 </head>
 
-<body style="font-family: Arial, sans-serif; background-color: #f0f0f5; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh;">
-    <div class="container">
-        <h1 style="font-size: 24px; margin-bottom: 20px; color: #fff;">Sign Up</h1>
-        {% include "sidebar/message.html" %}
-        <form action="{% url 'register' %}" method="POST" style="margin-bottom: 20px;">
-            {% csrf_token %}
-            <div style="margin-bottom: 15px; text-align: left;">
-                <label for="username" style="display: block; margin-bottom: 5px; font-weight: bold; color: #ddd;">Username</label>
-                <input type="text" id="username" name="username" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
-            </div>
-            <div style="margin-bottom: 15px; text-align: left;">
-                <label for="email" style="display: block; margin-bottom: 5px; font-weight: bold; color: #ddd;">Email</label>
-                <input type="email" id="email" name="email" placeholder="abc@example.com" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
-            </div>
-            <div style="margin-bottom: 20px; text-align: left;">
-                <label for="password" style="display: block; margin-bottom: 5px; font-weight: bold; color: #ddd;">Password</label>
-                <input type="password" id="password" name="password" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
-                <br>
-                <p id="para" style="color: white"></p>
-            </div>
-            <div class="form-group-inline">
-                <label>
-                    <input type="checkbox" id="show-password" name="show-password" onclick="showPass()" /> Show Password
-                </label>
-            </div><br>
-            <button type="submit" style="background-color: #28a745; color: #fff; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Sign Up</button>
-        </form>
-        <p style="margin-bottom: 10px; color: #ddd;">
-            <a href="{% url 'login' %}" class="text-white" style="color: white;">Or Log in</a>
-        </p>
-        <div style="display: flex; justify-content: center; gap: 20px;"></div>
+<body class="">
+  <div class="container position-sticky z-index-sticky top-0">
+    <div class="row">
+      <div class="col-12">
+        <!-- Navbar -->
+       
+        <!-- End Navbar -->
+      </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/user_login_signup.js' %}"></script>
-    <script src="{% static 'js/message.js' %}"></script>
+  </div>
+  <main class="main-content  mt-0">
+    <section>
+      <div class="page-header min-vh-100">
+        <div class="container">
+          <div class="row">
+            <div class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 start-0 text-center justify-content-center flex-column">
+              <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center" style="background-image: url('https://dslab.daffodilvarsity.edu.bd/summit/assets/backpic.jpg'); background-size: cover;">
+              </div>
+            </div>
+            <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
+              <div class="card card-plain">
+                <div class="card-header">
+                  <h4 class="font-weight-bolder">Register Form</h4>
+                  <p class="mb-0">Fill up the form to open new account!</p>
+                </div>
+                <div class="card-body">
+                  <form role="form" method="POST">
+                    {% csrf_token %}
+                    <div class="input-group input-group-outline mb-3">
+                      <label class="form-label">Userame</label>
+                      <input type="text" class="form-control" id="username" name="username">
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                      <label class="form-label">Email</label>
+                      <input type="text" class="form-control" id="email" name="email">
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                      <label class="form-label">Password</label>
+                      <input type="password" class="form-control" id="password" name="password">
+                    </div>
+                    <p id="para" style="color: black"></p>
+                    <div class="form-group-inline">
+                      <label
+                        ><input type="checkbox" id="show-password" name="show-password" onclick="showPass()"/>
+                        Show Password</label
+                      >
+                    </div>
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-lg bg-gradient-primary btn-lg w-100 mt-4 mb-0">Register</button>
+                    </div>
+                  </form>
+                </div>
+                <div class="card-footer text-center pt-0 px-lg-2 px-1">
+                  <p class="mb-2 text-sm mx-auto">
+                    Already have an account?
+                    <a href="{% url 'login' %}" class="text-primary text-gradient font-weight-bold">Sign In</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <!--   Core JS Files   -->
+    <script src="{% static 'js/core/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/plugins/perfect-scrollbar.min.js' %}"></script>
+    <script src="{% static 'js/user_login_signup.js' %} "></script>
+  <script src="{% static 'js/material-dashboard.min.js' %}"></script>
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="{% static 'js/material-dashboard.min.js' %}"></script>
 </body>
 
 </html>
