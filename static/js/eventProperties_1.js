@@ -2,6 +2,7 @@
 var searchBar = document.getElementById("searchBar");
 var allEvents = document.getElementById("all_events");
 var searchResults = document.getElementById("search_results");
+
 document.addEventListener("DOMContentLoaded", () => {
   let glowed = false;
   filterEvents("All Events").then(() => {
@@ -14,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
 
 var selectedValue = "All Events";
 document.querySelectorAll("#filterValues .dropdown-item").forEach((item) => {
@@ -46,10 +46,14 @@ function filterEvents(selectedClub) {
 
         // Wrap all the cards inside a row
         searchResults.innerHTML = `<div class="row">${cardsHTML}</div>`;
+
+        // Add hover effects for events dynamically
+        addHoverEffect();
       }
     });
 }
-// Style for glow effect
+
+// Glow effect styling
 const style = document.createElement("style");
 style.innerHTML = `
     .glow-effect {
@@ -67,6 +71,21 @@ style.innerHTML = `
 document.head.appendChild(style);
 
 // Glow effect function
+function Glow(eventId) {
+  const targetNotice = document.getElementById(`event-${eventId}`);
+  if (targetNotice) {
+    targetNotice.classList.add("glow-effect");
+
+    // Remove glow effect after 0.5 seconds
+    setTimeout(() => {
+      targetNotice.classList.remove("glow-effect");
+    }, 600);
+    return true;
+  } else {
+    console.error(`Element with id 'event-${eventId}' not found`);
+  }
+  return false;
+}
 
 // Search text truncation function
 function truncate(text) {
@@ -108,6 +127,8 @@ searchBar.addEventListener("keyup", (e) => {
           // Wrap all the cards inside a row
           searchResults.innerHTML = `<div class="row">${cardsHTML}</div>`;
 
+          addHoverEffect();
+
           // Apply glow effect to the event found in the search results
           // Ensure this works after rendering search results
         } else {
@@ -133,88 +154,78 @@ searchBar.addEventListener("keyup", (e) => {
     allEvents.style.display = "none";
   }
 });
+
+// Function to render events and dynamically apply hover effects
 function render_events(data) {
   let cardsHTML = "";
   data.forEach((element) => {
     cardsHTML += `
-                <div class="col-md-4 mb-4">
-                  <div class="card" style="width: 18rem;" id="event-${
-                    element.id
-                  }">
-                    <!-- Carousel for Images -->
-                    <div id="carousel-${
-                      element.id
-                    }" class="carousel slide" data-ride="carousel">
-                      <div class="carousel-inner">
-                        <div class="carousel-item active">
-                          <img src="/media/${
-                            element.event_image1
-                          }" class="d-block w-100" alt="Event Image 1">
-                        </div>
-                        ${
-                          element.event_image2
-                            ? `
-                          <div class="carousel-item">
-                            <img src="/media/${element.event_image2}" class="d-block w-100" alt="Event Image 2">
-                          </div>
-                        `
-                            : ""
-                        }
-                        ${
-                          element.event_image3
-                            ? `
-                          <div class="carousel-item">
-                            <img src="/media/${element.event_image3}" class="d-block w-100" alt="Event Image 3">
-                          </div>
-                        `
-                            : ""
-                        }
-                      </div>
-                      <!-- Carousel controls -->
-                      <a class="carousel-control-prev" href="#carousel-${
-                        element.id
-                      }" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                      </a>
-                      <a class="carousel-control-next" href="#carousel-${
-                        element.id
-                      }" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                      </a>
-                    </div>
-                    <div class="card-body">
-                      <h5 class="card-title">${element.event_name}</h5>
-                      <p class="card-text">${truncate(
-                        element.event_description
-                      )}</p>
-                      <div class="d-flex justify-content-between">
-                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#previewModal-${
-                          element.id
-                        }">
-                          View More
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              `;
+      <div class="col-md-4 mb-4">
+        <div class="card" id="event-${
+          element.id
+        }" style="width: 18rem; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+          <div id="carousel-${
+            element.id
+          }" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <img src="/media/${
+                  element.event_image1
+                }" class="d-block w-100" alt="Event Image 1">
+              </div>
+              ${
+                element.event_image2
+                  ? `<div class="carousel-item"><img src="/media/${element.event_image2}" class="d-block w-100" alt="Event Image 2"></div>`
+                  : ""
+              }
+              ${
+                element.event_image3
+                  ? `<div class="carousel-item"><img src="/media/${element.event_image3}" class="d-block w-100" alt="Event Image 3"></div>`
+                  : ""
+              }
+            </div>
+            <a class="carousel-control-prev" href="#carousel-${
+              element.id
+            }" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carousel-${
+              element.id
+            }" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">${element.event_name}</h5>
+            <p class="card-text">${truncate(element.event_description)}</p>
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#previewModal-${
+                element.id
+              }">
+                View More
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
   });
   return cardsHTML;
 }
-function Glow(eventId) {
-  const targetNotice = document.getElementById(`event-${eventId}`);
-  if (targetNotice) {
-    targetNotice.classList.add("glow-effect");
 
-    // Remove glow effect after 0.5 seconds
-    setTimeout(() => {
-      targetNotice.classList.remove("glow-effect");
-    }, 600);
-    return true;
-  } else {
-    console.error(`Element with id 'event-${eventId}' not found`);
-  }
-  return false;
+// Function to add hover effects dynamically
+function addHoverEffect() {
+  const eventCards = document.querySelectorAll(".container .card");
+  eventCards.forEach((card) => {
+    card.addEventListener("mouseenter", function () {
+      this.style.transform = "translateY(-10px) scale(1.05)";
+      this.style.boxShadow = "0 8px 20px rgba(0, 0, 0, 0.3)";
+    });
+    card.addEventListener("mouseleave", function () {
+      this.style.transform = "scale(1)";
+      this.style.boxShadow = "0 4px 10px rgba(0, 0, 0, 0.2)";
+    });
+  });
 }

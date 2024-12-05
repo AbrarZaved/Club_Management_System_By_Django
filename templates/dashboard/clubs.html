@@ -43,7 +43,7 @@
                   <div class="row" >
                     {% for things in club %}
                     <div class="col-md-4">
-                      <div class="card mb-3" style="width: 18rem;">
+                      <div class="card mb-3" style="width: 18rem; transition: transform 0.3s ease, box-shadow 0.3s ease;">
                         <img src="{{ things.image.url }}" class="card-img-top" alt="Club Image">
                         <div class="card-body">
                           <h5 class="card-title">{{ things.club_name }}</h5>
@@ -124,6 +124,19 @@
     });
   });
 </script>
+    <script>
+      const notices = document.querySelectorAll('#all_clubs .card');
+      notices.forEach(notice => {
+        notice.addEventListener('mouseenter', () => {
+          notice.style.transform = 'translateY(-10px) scale(1.05)';
+          notice.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.3)';
+        });
+        notice.addEventListener('mouseleave', () => {
+          notice.style.transform = 'scale(1)';
+          notice.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.2)';
+        });
+      });
+    </script>
 
 <script src="{% static 'js/clubProperties.js' %}"></script>
 {% endblock %}

@@ -54,6 +54,7 @@ function filterClub(selectedClub) {
         all_clubs.style.display = "none"; // Hide the club list
 
         renderClub(data, selectedClub); // Render filtered clubs
+        addHoverEffect(); // Add hover effect to the club cards
       }
     });
 }
@@ -78,6 +79,7 @@ function searchClub(text) {
                                 </div>`;
       } else {
         renderClub(data, searchClub); // Render the clubs found
+        addHoverEffect(); // Add hover effect to the club cards
       }
     });
 }
@@ -118,7 +120,7 @@ function renderClub(data, selectedClub) {
     // Add club card to the row container
     rowContainer += `
                       <div class="col-md-4">
-                      <div class="card mb-3" style="width: 18rem;">
+                      <div class="card mb-3" style="width: 18rem; transition: transform 0.3s ease, box-shadow 0.3s ease;">
                           <img src="/media/${element.image}" class="card-img-top" alt="...">
                           <div class="card-body">
                           <h5 class="card-title">${element.club_name}</h5>
@@ -137,4 +139,17 @@ function renderClub(data, selectedClub) {
 
   // Add the row container to the resClub element
   resClub.innerHTML = rowContainer;
+}
+function addHoverEffect() {
+  const eventCards = document.querySelectorAll("#result_clubs .card");
+  eventCards.forEach((card) => {
+    card.addEventListener("mouseenter", function () {
+      this.style.transform = "translateY(-10px) scale(1.05)";
+      this.style.boxShadow = "0 8px 20px rgba(0, 0, 0, 0.3)";
+    });
+    card.addEventListener("mouseleave", function () {
+      this.style.transform = "scale(1)";
+      this.style.boxShadow = "0 4px 10px rgba(0, 0, 0, 0.2)";
+    });
+  });
 }
