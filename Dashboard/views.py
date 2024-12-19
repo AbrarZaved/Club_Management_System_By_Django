@@ -163,7 +163,6 @@ def club_properties(request):
         selectedClub = json.loads(request.body).get("selectedClub")
         club_name = json.loads(request.body).get("text")
         if selectedClub:
-            data = {}
             if selectedClub == "joined":
                 meta_data = MemberJoined.objects.filter(student=student).values_list(
                     "club__club_name",
@@ -172,6 +171,8 @@ def club_properties(request):
                     "club__club_link",
                     "club__tag",
                 )
+                
+                # Create data list only if meta_data exists
                 data = [
                     {
                         "club_name": club[0],
@@ -181,10 +182,12 @@ def club_properties(request):
                         "tag": club[4],
                     }
                     for club in meta_data
-                ]
-                return JsonResponse(list(data), safe=False)
+                ] if meta_data else []  # Ensure data is empty if no meta_data is found
+                return JsonResponse(data, safe=False)
+ # `data` is already a list
+
             if selectedClub == "explore":
-                data = {}
+                data = []  # Initialize as a list
                 club_list = list(
                     Club.objects.values_list("club_name", flat=True)
                 )  # Directly convert to list
@@ -203,17 +206,18 @@ def club_properties(request):
                         "club_link",
                         "tag",
                     )
-                data = [
-                    {
-                        "club_name": club[0],
-                        "image": club[1],
-                        "about_club": club[2],
-                        "club_link": club[3],
-                        "tag": club[4],
-                    }
-                    for club in meta_data
-                ]
-                return JsonResponse(list(data), safe=False)
+                    for club in meta_data:
+                        data.append(
+                            {
+                                "club_name": club[0],
+                                "image": club[1],
+                                "about_club": club[2],
+                                "club_link": club[3],
+                                "tag": club[4],
+                            }
+                        )
+                return JsonResponse(data, safe=False)  # Ensure `data` is a list
+
             if (
                 selectedClub == "All"
             ):  # Filter `club_list` to only items not in `member_clubs`

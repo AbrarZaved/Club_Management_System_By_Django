@@ -18,7 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
         data.forEach((element) => {
           clubs.push(element.club_name); // Push club names into the array
         });
+
       }
+      selectedClub = "All"; // Default selection
+      filterClub(selectedClub); // Filter clubs based on selection
     });
 });
 
@@ -49,7 +52,21 @@ function filterClub(selectedClub) {
   })
     .then((res) => res.json())
     .then((data) => {
-      if (data.length > 0) {
+      if (data.length === 0 && selectedClub === "joined") {
+        resClub.innerHTML = `<div class="card">
+                                    <div class="card-body" style="text-align:center;color:white">
+                                        <h5><b>You Haven't Joined Any Clubs Yet</b></h5>
+                                    </div>
+                                </div>`;
+      }
+      if (data.length === 0 && selectedClub === "explore") {
+        resClub.innerHTML = `<div class="card">
+                                    <div class="card-body" style="text-align:center;color:white">
+                                        <h5><b>You Have Joined All the Clubs</b></h5>
+                                    </div>
+                                </div>`;
+      }
+      if (data.length) {
         resClub.innerHTML = ""; // Clear previous results
         all_clubs.style.display = "none"; // Hide the club list
 
